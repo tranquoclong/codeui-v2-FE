@@ -1,0 +1,23 @@
+import { cookies } from 'next/headers'
+import guestApiRequest from '@/apiRequests/guest'
+import { setAuthCookies } from '@/lib/cookie-utils'
+import { createApiResponse } from '@/lib/api-helpers'
+
+export async function POST(request: Request) {
+  const cookieStore = await cookies()
+  const refreshToken = cookieStore.get('refreshToken')?.value
+  if (!refreshToken) {
+    return createApiResponse({ message: 'Không tìm thấy refreshToken' }, 401)
+  }
+  try {
+    const { payload } = await guestApiRequest.sRefreshToken({ refreshToken })
+    await setAuthCookies(payload.accessToken, payload.refreshToken)
+    return Response.json(payload)
+  } catch (error: unknown) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Guest refresh token error:', error)
+    }
+    const message = error instanceof Error ? error.message : 'Có lỗi xảy ra'
+    return createApiResponse({ message }, 401)
+  }
+}
