@@ -32,10 +32,10 @@ export default function ChangePasswordForm() {
     if (changePasswordMutation.isPending) return
     try {
       const result = await changePasswordMutation.mutateAsync(data)
-      setAccessTokenToLocalStorage(result.payload.data.accessToken)
-      setRefreshTokenToLocalStorage(result.payload.data.refreshToken)
+      setAccessTokenToLocalStorage(result.payload.accessToken)
+      setRefreshTokenToLocalStorage(result.payload.refreshToken)
       toast({
-        description: result.payload.message
+        description: 'thanh cong'
       })
     } catch (error) {
       handleErrorApi({

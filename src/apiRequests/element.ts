@@ -4,7 +4,8 @@ import {
   ElementListResType,
   ElementResType,
   UpdateElementBodyType,
-  ElementCodeResType
+  ElementCodeResType,
+  UpdateManageElementBodyType
 } from '@/schemaValidations/element.schema'
 import { GetElementsQueryParamsType } from '@/schemaValidations/order.schema'
 import queryString from 'query-string'
@@ -36,8 +37,10 @@ const elementApiRequest = {
     }), { next: { tags: ['manageElements'] } }),
   add: (body: CreateElementBodyType) => http.post<ElementResType>('/manage-element/elements', body),
   getElement: (id: number) => http.get<ElementResType>(`/elements/${id}`),
+  getManagElement: (id: number) => http.get<ElementResType>(`/manage-element/elements/${id}`),
   getElementCode: (id: number) => http.get<ElementCodeResType>(`/element-codes/${id}`),
   updateElement: (id: number, body: UpdateElementBodyType) => http.put<ElementResType>(`/elements/${id}`, body),
+  updateManageElement: (id: number, body: UpdateManageElementBodyType) => http.put<ElementResType>(`/manage-element/elements/${id}`, body),
   deleteElement: (id: number) => http.delete<ElementResType>(`/elements/${id}`)
 }
 

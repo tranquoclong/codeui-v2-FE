@@ -40,7 +40,7 @@ const Element = ({ element }: Props) => {
               </Link>
             </div>
             <div className='absolute top-[6px] left-1.5 z-20 flex items-center gap-0.5' />
-            <CodePreview html={elementCode.html} css={elementCode.css} />
+            <CodePreview isTailwind={element.isTailwind} html={elementCode.html} css={elementCode.css} />
           </div>
           <div className='flex items-center justify-between pr-[2px] pl-[4px] mt-[2px] text-sm h-[28px] px-1'>
             <div className=''>

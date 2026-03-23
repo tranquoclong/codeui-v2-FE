@@ -305,14 +305,14 @@ export default function ElementTable() {
   const searchParam = useSearchParams()
   // const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1
   const page = searchParam.get('page') || '1'
-  const limit = searchParam.get('limit') || '10'
+  const limit = searchParam.get('limit') || '30'
   const orderBy = searchParam.get('orderBy') || 'randomized'
   const theme = searchParam.get('theme') || 'all'
   const t = searchParam.get('t') || 'all'
   const pageIndex = Number(page) - 1
   const paramss = useMemo(() => ({ page, limit, orderBy, theme, t }), [page, limit, orderBy, theme, t])
   // const params = Object.fromEntries(searchParam.entries())
-  const [elementIdEdit, setElementIdEdit] = useState<number | undefined>()
+  const [elementIdEdit, setElementIdEdit] = useState<number>(0)
   const [elementDelete, setElementDelete] = useState<ElementItem | null>(null)
   const elementListQuery = useManageElementListQuery(paramss)
   const data = elementListQuery.data?.payload.data ?? []
@@ -395,7 +395,6 @@ export default function ElementTable() {
         <EditElement
           id={elementIdEdit}
           setId={setElementIdEdit}
-          // onSubmitSuccess={() => {}}
         />
         <AlertDialogDeleteElement elementDelete={elementDelete} setElementDelete={setElementDelete} />
         <DataTableToolbar

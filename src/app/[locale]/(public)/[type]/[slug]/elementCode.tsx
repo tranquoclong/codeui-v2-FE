@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useRouter } from '@/i18n/routing'
 import EditorElement from '../../create/editor'
 import { useGetElementQuery } from '@/queries/useElement'
@@ -16,7 +16,14 @@ export default function ElementCode({ id }: Props) {
   const [color, setColor] = useState<'#212121' | '#e8e8e8'>( '#212121')
   const [htmlText, setHtmlText] = useState(element?.elementCode.html || '')
   const [cssText, setCssText] = useState(element?.elementCode.css || '')
-
+  useEffect(() => {
+    if (element) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTheme(element.theme || 'DARK')
+      setHtmlText(element.elementCode?.html || '')
+      setCssText(element.elementCode?.css || '')
+    }
+  }, [element])
   return (
     <div className='w-full min-w-0 z-10'>
       <main className='mx-auto mb-40 border-none wrapper'>
@@ -93,7 +100,6 @@ export default function ElementCode({ id }: Props) {
           </div>
         </div>
         <EditorElement
-          type={element?.brand.name || 'button'}
           tech={element?.isTailwind ? 'tailwind' : 'css'}
           htmlText={htmlText}
           cssText={cssText}

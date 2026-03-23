@@ -15,6 +15,17 @@ export const CreateElementBody = z.object({
   status: z.enum([ElementStatus.DRAFT, ElementStatus.REVIEW]),
 })
 
+
+export const UpdateManageElementBody = CreateElementBody.omit({
+  brandId: true,
+  elementOriginalId: true,
+  isTailwind: true,
+}).extend({
+  status: z.enum([ElementStatus.DRAFT, ElementStatus.REVIEW, ElementStatus.APPROVED, ElementStatus.REJECTED]),
+  html: z.string().optional(),
+  css: z.string().optional(),
+})
+
 export type CreateElementBodyType = z.TypeOf<typeof CreateElementBody>
 
 export const ElementSchema = z.object({
@@ -69,6 +80,7 @@ export type ElementListResType = z.TypeOf<typeof ElementListRes>
 
 export const UpdateElementBody = CreateElementBody
 export type UpdateElementBodyType = CreateElementBodyType
+export type UpdateManageElementBodyType = z.TypeOf<typeof UpdateManageElementBody>
 export const ElementParams = z.object({
   id: z.coerce.number()
 })

@@ -1,5 +1,5 @@
 import elementApiRequest from '@/apiRequests/element'
-import { UpdateElementBodyType } from '@/schemaValidations/element.schema'
+import { UpdateElementBodyType, UpdateManageElementBodyType } from '@/schemaValidations/element.schema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query-keys'
 import { GetElementsQueryParamsType } from '@/schemaValidations/order.schema'
@@ -43,6 +43,14 @@ export const useGetElementQuery = ({ id, enabled }: { id: number; enabled: boole
   })
 }
 
+export const useGetManageElementQuery = ({ id, enabled }: { id: number; enabled: boolean }) => {
+  return useQuery({
+    queryKey: queryKeys.elements.detailManage(id),
+    queryFn: () => elementApiRequest.getManagElement(id),
+    enabled
+  })
+}
+
 export const useGetElementCodeQuery = ({ id, enabled }: { id: number; enabled: boolean }) => {
   return useQuery({
     queryKey: queryKeys.elements.code(id),
@@ -74,6 +82,22 @@ export const useUpdateElementMutation = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.elements.all,
         predicate: (query) => query.queryKey.length === 1
+      })
+    }
+  })
+}
+
+export const useUpdateManageElementMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, ...body }: UpdateManageElementBodyType & { id: number }) =>
+      elementApiRequest.updateManageElement(id, body),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(queryKeys.elements.detailManage(variables.id), data)
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.elements.allManage,
+        exact: true
       })
     }
   })

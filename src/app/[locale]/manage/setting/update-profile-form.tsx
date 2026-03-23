@@ -36,7 +36,7 @@ export default function UpdateProfileForm() {
   const name = form.watch('name')
   useEffect(() => {
     if (data) {
-      const { name, avatar } = data.payload.data
+      const { name, avatar } = data.payload
       form.reset({
         name,
         avatar: avatar ?? undefined
@@ -74,7 +74,7 @@ export default function UpdateProfileForm() {
       }
       const result = await updateMeMutation.mutateAsync(body)
       toast({
-        description: result.payload.message
+        description: 'thanh cong'
       })
       refetch()
     } catch (error) {

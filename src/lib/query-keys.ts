@@ -22,10 +22,12 @@ export const queryKeys = {
     detail: (id: number) => ['dishes', id] as const
   },
   elements: {
-    all: ['elements'] as const, 
+    all: ['elements'] as const,
+    allManage: ['manageElements'] as const, 
     list: (queryParams: unknown) => ['elements', queryParams] as const,
     listManage: (queryParams: unknown) => ['manageElements', queryParams] as const,
     detail: (id: number) => ['elements', id] as const,
+    detailManage: (id: number) => ['manageElements', id] as const,
     code: (id: number) => ['code', id] as const
   },
   orders: {

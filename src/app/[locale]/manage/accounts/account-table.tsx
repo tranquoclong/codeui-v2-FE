@@ -145,7 +145,7 @@ export const columns: ColumnDef<AccountType>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title='Role' />,
     cell: ({ row }) => {
       const { role } = row.original
-      const userType = roles.find(({ value }) => value === role)
+      const userType = roles.find(({ value }) => value === role.name)
 
       if (!userType) {
         return null
@@ -274,7 +274,7 @@ function AlertDialogDeleteAccount({
               Are you sure you want to delete <span className='font-bold'>{employeeDelete?.name}</span>?
               <br />
               This action will permanently remove the user with the role of{' '}
-              <span className='font-bold'>{employeeDelete?.role.toUpperCase()}</span> from the system. This cannot be
+              <span className='font-bold'>{employeeDelete?.role.name.toUpperCase()}</span> from the system. This cannot be
               undone.
             </p>
 

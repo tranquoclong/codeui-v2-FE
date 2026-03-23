@@ -167,16 +167,35 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
           <p className='relative font-semibold z-10 mx-auto mt-4 max-w-md text-center text-neutral-800 dark:text-neutral-500'>
             Community-built library of UI elements. Copy as HTML/CSS, Tailwind, React and Figma.
           </p>
-          <div className='flex mt-4 w-full flex-col gap-4 gap-y-2 md:mx-auto md:max-w-xs md:flex-row md:justify-center'>
+          {/* <div className='flex mt-4 w-full flex-col gap-4 gap-y-2 md:mx-auto md:max-w-xs md:flex-row md:justify-center'>
             <RainbowButton>Get Elements</RainbowButton>
             <RainbowButton variant='outline'>Get Products</RainbowButton>
-          </div>
+          </div> */}
         </div>
-        <div className='grid gap-y-5 gap-x-3.5 content-stretch items-stretch w-full my-20 max-xs:grid-cols-1 max-xs:gap-2.5 grid-cols-[repeat(auto-fill,minmax(294px,1fr))]'>
+        <section className='relative z-10 flex flex-col gap-4 px-4 mx-auto mb-24 sm:container sm:px-0'>
+          <div className='mx-5 overflow-hidden border-2 bg-dark-800 rounded-3xl border-dark-600/80'>
+            <div className='pt-10 pb-0 relative'>
+              <div
+                className='absolute left-1/2 top-[80%] z-0 -translate-x-1/2 w-[100%] h-full bg-gradient-to-br from-gray-500 to-gray-700 rounded-full opacity-20 blur-3xl '
+                aria-hidden='true'
+              />
+              <div className='grid gap-y-5 gap-x-3.5 content-stretch items-stretch w-full my-20 max-xs:grid-cols-1 max-xs:gap-2.5 grid-cols-[repeat(auto-fill,minmax(294px,1fr))]'>
           {/* {codePreviews.map((element, index) => (
             <Element element={element} key={index} />
           ))} */}
         </div>
+              <h2 className='mb-12 text-3xl font-bold font-display text-gray-100 text-center relative z-10'>
+                Elements
+              </h2>
+            </div>
+          </div>
+        </section>
+
+        {/* <div className='grid gap-y-5 gap-x-3.5 content-stretch items-stretch w-full my-20 max-xs:grid-cols-1 max-xs:gap-2.5 grid-cols-[repeat(auto-fill,minmax(294px,1fr))]'>
+          {codePreviews.map((element, index) => (
+            <Element element={element} key={index} />
+          ))}
+        </div> */}
       </div>
       {dishIndicator.length > 0 && (
         <ScrollAnimate>
@@ -193,7 +212,7 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
         />
       </ScrollAnimate>
       <section className='relative z-10 flex flex-col gap-4 px-4 mx-auto mb-24 sm:container sm:px-0'>
-        <div className='mx-5 w-full overflow-hidden border-2 bg-dark-800 rounded-3xl border-dark-600/80'>
+        <div className='mx-5 overflow-hidden border-2 bg-dark-800 rounded-3xl border-dark-600/80'>
           <div className='pt-10 pb-0 relative'>
             <div
               className='absolute left-1/2 top-[80%] z-0 -translate-x-1/2 w-[100%] h-full bg-gradient-to-br from-gray-500 to-gray-700 rounded-full opacity-20 blur-3xl '

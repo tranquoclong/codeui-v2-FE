@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { RainbowButton } from '@/components/magicui/rainbow-button'
 import EditorElement from './editor'
+import { useRouter } from '@/i18n/routing'
 import ModalType from './modalType'
 import CodePreview from '@/components/codePreview'
 import { toast } from '@/components/ui/use-toast'
@@ -10,44 +11,28 @@ import { useAddElementMutation } from '@/queries/useElement'
 import { CreateElementBodyType } from '@/schemaValidations/element.schema'
 import { ElementStatus, ThemeElement } from '@/constants/type'
 import { LoaderCircle } from 'lucide-react'
+import { defaultCodes } from './data/data'
 
-const defaultCodes: Record<string, { html: string; css: string }> = {
-  button: {
-    html: `<button class="button"> Button </button>`,
-    css: `.button { cursor: pointer; }`
-  },
-  switch: {
-    html: `<label class="switch"> <input type="checkbox"> <span class="slider"></span> </label>`,
-    css: `.switch { font-size: 17px; position: relative; display: inline-block; width: 3.5em; height: 2em; } .switch input { opacity: 0; width: 0; height: 0; } .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 30px; } .slider:before { position: absolute; content: ""; height: 1.4em; width: 1.4em; border-radius: 20px; left: 0.3em; bottom: 0.3em; background-color: white; transition: .4s; } .switch input:checked + .slider { background-color: #2196F3; } .switch input:focus + .slider { box-shadow: 0 0 1px #2196F3; } .switch input:checked + .slider:before { transform: translateX(1.5em); }`
-  },
-  card: {
-    html: `<span class="badge">card</span>`,
-    css: ``
-  },
-  badge: {
-    html: `<span class="badge">New</span>`,
-    css: ``
-  }
-}
 export default function Create() {
+  const router = useRouter()
   const [openModal, setOpenModal] = useState(true)
-  const [type, setType] = useState<string>('button')
+  const [type, setType] = useState({ id: 1, value: 'button' })
   const [tech, setTech] = useState<'css' | 'tailwind'>('css')
   const [theme, setTheme] = useState<'DARK' | 'LIGHT'>('DARK')
   const [color, setColor] = useState<'#212121' | '#e8e8e8'>('#212121')
-  const [htmlText, setHtmlText] = useState(defaultCodes[type].html)
-  const [cssText, setCssText] = useState(tech === 'tailwind' ? '' : defaultCodes[type].css)
+  const [htmlText, setHtmlText] = useState(defaultCodes[type.value].html)
+  const [cssText, setCssText] = useState(tech === 'tailwind' ? '' : defaultCodes[type.value].css)
   const dddElementMutation = useAddElementMutation()
-  const handleChangeType = (newType: string) => {
+  const handleChangeType = (newType: { id: number; value: string }) => {
     setType(newType)
-    const codeSet = defaultCodes[newType]
+    const codeSet = defaultCodes[newType.value]
     setHtmlText(codeSet.html)
     setCssText(tech === 'tailwind' ? '' : codeSet.css)
   }
 
   const handleChangeTech = (newTech: 'css' | 'tailwind') => {
     setTech(newTech)
-    const codeSet = defaultCodes[type]
+    const codeSet = defaultCodes[type.value]
     setCssText(newTech === 'tailwind' ? '' : codeSet.css)
   }
 
@@ -60,7 +45,7 @@ export default function Create() {
           isTailwind: cssText === '',
           status: status,
           theme: ThemeElement.DARK,
-          brandId: 1,
+          brandId: type.id,
           html: htmlText,
           css: cssText,
           categories: [1],
@@ -70,6 +55,7 @@ export default function Create() {
         toast({
           description: 'thanh cong'
         })
+        router.push('/elements')
       } catch (error) {
         toast({
           description: 'khong thanh cong'
@@ -87,7 +73,6 @@ export default function Create() {
               <div className='flex gap-5' />
             </div>
             <EditorElement
-              type={type}
               tech={tech}
               htmlText={htmlText}
               cssText={cssText}

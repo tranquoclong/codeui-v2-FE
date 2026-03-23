@@ -6,7 +6,6 @@ import { Check, Copy } from 'lucide-react'
 import CodePreview from '@/components/codePreview'
 
 type Props = {
-  type: string
   tech: 'css' | 'tailwind'
   htmlText: string
   cssText: string
@@ -19,7 +18,6 @@ type Props = {
 }
 
 export default function EditorElement({
-  type,
   tech,
   htmlText,
   cssText,
@@ -60,16 +58,17 @@ export default function EditorElement({
       <div className='flex relative md:min-w-[330px] w-1/2 max-md:min-h-[450px] max-md:w-full h-[calc(100vh-140px)] md:h-auto min-h-0'>
         <div
           className='flex flex-1 absolute w-full left-0 top-0 py-10 h-full font-sans border-none'
-          style={{ background: color }}
+          style={{ backgroundColor: color }}
         >
-          <div className='flex h-full w-full text-black border-none preview-container'>
+          <CodePreview isTailwind={tech === 'tailwind'} html={htmlText} css={cssText} />
+          {/* <div className='flex h-full w-full text-black border-none preview-container'>
             <div
               className='flex items-center justify-center h-full w-full relative z-[1] transform-cpu overflow-hidden'
               id='shadow-root-div-ready'
             >
-              <CodePreview html={htmlText} css={cssText} />
+              <CodePreview isTailwind={tech === 'tailwind'} html={htmlText} css={cssText} />
             </div>
-          </div>
+          </div> */}
           <div className='p-4 flex items-center border-none gap-3 absolute top-0 right-0 z-10'>
             <span
               className='font-semibold border-none'
