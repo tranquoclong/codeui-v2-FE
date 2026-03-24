@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState, useEffect, useRef } from 'react'
-import { Link } from '@/i18n/routing'
+import { Link, usePathname } from '@/i18n/routing'
 import { cn } from '@/lib/utils'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
@@ -248,9 +248,9 @@ const Array = [
   }
 ]
 export default function ElementNav() {
-
+  const pathname = usePathname()
   return (
-    <div className='z-0 h-[calc(100vh_-_66px)] mr-4 sticky -top-3 pt-7 pb-4 hidden xl:block'>
+    <div className='z-0 h-[calc(100vh_-_66px)] mr-4 sticky top-10 pt-7 pb-4 hidden xl:block'>
       <div className='w-[200px] flex flex-col h-full'>
         <ScrollArea className='relative h-full overflow-hidden'>
           <nav className='h-full overflow-auto custom-scrollbar-transparent'>
@@ -259,7 +259,7 @@ export default function ElementNav() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  item.href === 'css' && 'bg-neutral-800',
+                  item.href === pathname.slice(1) && 'bg-neutral-800',
                   'hover:bg-neutral-800 transition-colors tracking-wide flex items-center gap-2 font-normal text-sm px-4 pl-3 mb-1 mr-3 py-2.5 rounded-lg tab--elements'
                 )}
               >

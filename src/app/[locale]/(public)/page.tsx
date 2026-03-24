@@ -18,6 +18,8 @@ import { RainbowButton } from '@/components/magicui/rainbow-button'
 import { Marquee } from '@/components/magicui/marquee'
 import { cn } from '@/lib/utils'
 import Element from '@/components/element'
+import elementApiRequest from '@/apiRequests/element'
+import { ElementListResType } from '@/schemaValidations/element.schema'
 
 export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }) {
   const params = await props.params
@@ -35,24 +37,6 @@ export async function generateMetadata(props: { params: Promise<{ locale: Locale
     }
   }
 }
-const codePreviews = [
-  {
-    html: '<button class="btn">codeui</button>',
-    css: '.btn { padding: 10px 20px; border: none; font-size: 17px; color: #fff; border-radius: 7px; letter-spacing: 4px; font-weight: 700; text-transform: uppercase; transition: 0.5s; transition-property: box-shadow; background: rgb(0,140,255); box-shadow: 0 0 25px rgb(0,140,255); }'
-  },
-  {
-    html: '<button class="btn">codeui</button>',
-    css: '.btn { padding: 10px 20px; border: none; font-size: 17px; color: #fff; border-radius: 7px; letter-spacing: 4px; font-weight: 700; text-transform: uppercase; transition: 0.5s; transition-property: box-shadow; background: rgb(0,140,255); box-shadow: 0 0 25px rgb(0,140,255); }'
-  },
-  {
-    html: '<button class="btn">codeui</button>',
-    css: '.btn { padding: 10px 20px; border: none; font-size: 17px; color: #fff; border-radius: 7px; letter-spacing: 4px; font-weight: 700; text-transform: uppercase; transition: 0.5s; transition-property: box-shadow; background: rgb(0,140,255); box-shadow: 0 0 25px rgb(0,140,255); }'
-  },
-  {
-    html: '<button class="btn">codeui</button>',
-    css: '.btn { padding: 10px 20px; border: none; font-size: 17px; color: #fff; border-radius: 7px; letter-spacing: 4px; font-weight: 700; text-transform: uppercase; transition: 0.5s; transition-property: box-shadow; background: rgb(0,140,255); box-shadow: 0 0 25px rgb(0,140,255); }'
-  }
-]
 const tags = [
   {
     tagName: 'button',
@@ -140,76 +124,87 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
   const t = await getTranslations('HomePage')
 
   const now = new Date()
-  const [dishResult, indicatorResult] = await Promise.allSettled([
-    wrapServerApi(dishApiRequest.list),
+  const [elementResult] = await Promise.allSettled([
     wrapServerApi(() =>
-      indicatorApiRequest.getDashboardIndicators({
-        fromDate: startOfMonth(now),
-        toDate: endOfDay(now)
+      elementApiRequest.list({
+        page: '1',
+        limit: '10',
+        orderBy: 'randomized',
+        theme: 'all',
+        t: 'all'
       })
     )
   ])
 
-  const dishList: DishListResType['data'] =
-    dishResult.status === 'fulfilled' ? (dishResult.value?.payload.data ?? []) : []
-  const indicatorData: DashboardIndicatorResType['data'] | null =
-    indicatorResult.status === 'fulfilled' ? (indicatorResult.value?.payload.data ?? null) : null
-
-  const dishIndicator = indicatorData?.dishIndicator ?? []
+  const elementList: ElementListResType['data'] = elementResult.status === 'fulfilled' ? (elementResult.value?.payload.data ?? []) : []
 
   return (
     <div className='w-full space-y-0'>
       <div className='relative flex min-h-screen w-full flex-col items-start justify-start overflow-hidden'>
-        <div className='mt-40 w-full'>
+        <div className='mt-20 mb-5 w-full'>
           <h2 className=' relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold text-neutral-800 md:text-4xl lg:text-7xl dark:text-neutral-100'>
             The Largest Library of Open-Source UI
           </h2>
           <p className='relative font-semibold z-10 mx-auto mt-4 max-w-md text-center text-neutral-800 dark:text-neutral-500'>
             Community-built library of UI elements. Copy as HTML/CSS, Tailwind, React and Figma.
           </p>
-          {/* <div className='flex mt-4 w-full flex-col gap-4 gap-y-2 md:mx-auto md:max-w-xs md:flex-row md:justify-center'>
+          <div className='flex mt-4 w-full flex-col gap-4 gap-y-2 md:mx-auto md:max-w-xs md:flex-row md:justify-center'>
             <RainbowButton>Get Elements</RainbowButton>
             <RainbowButton variant='outline'>Get Products</RainbowButton>
-          </div> */}
+          </div>
         </div>
-        <section className='relative z-10 flex flex-col gap-4 px-4 mx-auto mb-24 sm:container sm:px-0'>
+        <section className='relative z-10 flex flex-col gap-4 px-4 mx-auto sm:container sm:px-0'>
           <div className='mx-5 overflow-hidden border-2 bg-dark-800 rounded-3xl border-dark-600/80'>
-            <div className='pt-10 pb-0 relative'>
+            <div className='p-5 pb-0 relative'>
               <div
                 className='absolute left-1/2 top-[80%] z-0 -translate-x-1/2 w-[100%] h-full bg-gradient-to-br from-gray-500 to-gray-700 rounded-full opacity-20 blur-3xl '
                 aria-hidden='true'
               />
-              <div className='grid gap-y-5 gap-x-3.5 content-stretch items-stretch w-full my-20 max-xs:grid-cols-1 max-xs:gap-2.5 grid-cols-[repeat(auto-fill,minmax(294px,1fr))]'>
-          {/* {codePreviews.map((element, index) => (
-            <Element element={element} key={index} />
-          ))} */}
-        </div>
-              <h2 className='mb-12 text-3xl font-bold font-display text-gray-100 text-center relative z-10'>
+              <div className='grid gap-y-5 gap-x-3.5 content-stretch items-stretch w-full max-xs:grid-cols-1 max-xs:gap-2.5 grid-cols-[repeat(auto-fill,minmax(294px,1fr))]'>
+                {elementList.slice(1, 5).map((element, index) => (
+                  <Element element={element} showInfor={false} key={index} />
+                ))}
+              </div>
+              {/* <h2 className='mb-12 text-3xl font-bold font-display text-gray-100 text-center relative z-10'>
                 Elements
-              </h2>
+              </h2> */}
+              <div className='m-auto py-5 gap-3 max-w-[530px] w-full'>
+                <div className='flex w-full relative z-[21] p-1 mx-auto  hover:scale-105 bg-gray-300 shadow-lg overflow-visible [&:has(:focus-visible)]:ring-4 rounded-2xl transition-transform [&:has(:focus-visible)]:ring-indigo-400 [&:has(:focus-visible)]:border-indigo-400'>
+                  <input
+                    type='text'
+                    placeholder='Search for components, styles, creators...'
+                    className='block w-full px-6 pl-12 py-4 pr-2 mr-px font-sans ouline-gray-200 font-normal outline-none rounded-xl text-base border-none focus:ring-0 bg-gray-300 text-gray-900 placeholder:text-gray-500 shadow-sm'
+                    defaultValue=''
+                  />
+                  <svg
+                    width={24}
+                    height={24}
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    xmlns='http://www.w3.org/2000/svg'
+                    className='w-5 h-5 text-gray-600 absolute left-6 top-1/2 -translate-y-1/2'
+                  >
+                    <path
+                      d='M21 21L14.9497 14.9497M14.9497 14.9497C16.2165 13.683 17 11.933 17 10C17 6.13401 13.866 3 10 3C6.13401 3 3 6.13401 3 10C3 13.866 6.13401 17 10 17C11.933 17 13.683 16.2165 14.9497 14.9497Z'
+                      stroke='currentColor'
+                      strokeWidth={2}
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    />
+                  </svg>
+                  <button
+                    className='flex items-center px-8 py-1.5 text-base gap-1.5 font-sans font-semibold transition-colors bg-indigo-600 hover:bg-indigo-700 text-offwhite group border-none cursor-pointer rounded-xl pointer'
+                  >
+                    <span>Search</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
-
-        {/* <div className='grid gap-y-5 gap-x-3.5 content-stretch items-stretch w-full my-20 max-xs:grid-cols-1 max-xs:gap-2.5 grid-cols-[repeat(auto-fill,minmax(294px,1fr))]'>
-          {codePreviews.map((element, index) => (
-            <Element element={element} key={index} />
-          ))}
-        </div> */}
       </div>
-      {dishIndicator.length > 0 && (
-        <ScrollAnimate>
-          s
-          <FeaturedDishes dishIndicator={dishIndicator} />
-        </ScrollAnimate>
-      )}
-
       <ScrollAnimate delay={100}>
-        <StatsCounter
-          dishCount={dishList.length}
-          orderCount={indicatorData?.orderCount ?? 0}
-          guestCount={indicatorData?.guestCount ?? 0}
-        />
+        <StatsCounter dishCount={0} orderCount={0} guestCount={0} />
       </ScrollAnimate>
       <section className='relative z-10 flex flex-col gap-4 px-4 mx-auto mb-24 sm:container sm:px-0'>
         <div className='mx-5 overflow-hidden border-2 bg-dark-800 rounded-3xl border-dark-600/80'>
@@ -477,12 +472,12 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
         </div>
       </section>
 
-      <ScrollAnimate>
+      {/* <ScrollAnimate>
         <section id='dish-listing' className='space-y-10 py-16 px-4 md:px-8'>
           <h2 className='text-center text-2xl font-bold'>{t('h2')}</h2>
           <DishFilter dishes={dishList} dishIndicator={dishIndicator} />
         </section>
-      </ScrollAnimate>
+      </ScrollAnimate> */}
       <div className='before:animate-rainbow pointer-events-none absolute inset-0 h-24 w-full before:absolute before:bottom-[-20%] before:left-1/2 before:z-0 before:h-4/5 before:w-3/5 before:-translate-x-1/2 before:bg-[linear-gradient(90deg,var(--color-1),var(--color-5),var(--color-3),var(--color-4),var(--color-2))] before:bg-size-[200%] before:opacity-20 before:filter-[blur(calc(4*1rem))]'></div>
       <div className='before:animate-rainbow pointer-events-none absolute bottom-0 h-24 w-full before:absolute before:top-[-50%] before:left-1/2 before:z-0 before:h-4/5 before:w-3/5 before:-translate-x-1/2 before:bg-[linear-gradient(90deg,var(--color-1),var(--color-5),var(--color-3),var(--color-4),var(--color-2))] before:bg-size-[200%] before:opacity-20 before:filter-[blur(calc(4*1rem))]'></div>
     </div>
