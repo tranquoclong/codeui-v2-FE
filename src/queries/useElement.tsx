@@ -1,17 +1,17 @@
 import elementApiRequest from '@/apiRequests/element'
-import { UpdateElementBodyType, UpdateManageElementBodyType } from '@/schemaValidations/element.schema'
+import { GetElementsQueryType, GetManageElementsQueryType, UpdateElementBodyType, UpdateManageElementBodyType } from '@/schemaValidations/element.schema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query-keys'
-import { GetElementsQueryParamsType } from '@/schemaValidations/order.schema'
+// import { GetElementsQueryParamsType } from '@/schemaValidations/order.schema'
 
-export const useElementListQuery = (queryParams: GetElementsQueryParamsType) => {
+export const useElementListQuery = (queryParams: GetElementsQueryType) => {
   return useQuery({
     queryFn: () => elementApiRequest.list(queryParams),
     queryKey: queryKeys.elements.list(queryParams)
   })
 }
 
-export const useManageElementListQuery = (queryParams: GetElementsQueryParamsType) => {
+export const useManageElementListQuery = (queryParams: GetManageElementsQueryType) => {
   return useQuery({
     queryFn: () => elementApiRequest.listManage(queryParams),
     queryKey: queryKeys.elements.listManage(queryParams)

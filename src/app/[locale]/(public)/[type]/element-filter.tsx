@@ -8,13 +8,13 @@ import { cn } from '@/lib/utils'
 import { RainbowButton } from '@/components/magicui/rainbow-button'
 
 interface Props {
-  orderBy: string
-  theme: string
-  t: string
+  sortBy: string
+  theme: 'DARK' | 'LIGHT' | undefined
+  t: boolean | undefined
   search: string
   setSearch: (value: string) => void
 }
-export default function ElementFilter({ orderBy, theme, t, search, setSearch }: Props) {
+export default function ElementFilter({ sortBy, theme, t, search, setSearch }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -57,7 +57,7 @@ export default function ElementFilter({ orderBy, theme, t, search, setSearch }: 
             <div className='items-center hidden gap-1 text-sm lg:flex'>
               <div
                 className={cn(
-                  t === 'all' && 'bg-neutral-800',
+                  t === undefined && 'bg-neutral-800',
                   'flex items-center cursor-pointer py-2 px-2.5 font-semibold gap-2 hover:bg-neutral-800 rounded-lg text-gray-200'
                 )}
                 onClick={() =>
@@ -70,7 +70,7 @@ export default function ElementFilter({ orderBy, theme, t, search, setSearch }: 
               </div>
               <div
                 className={cn(
-                  t === 'tailwind' && 'bg-neutral-800',
+                  t && 'bg-neutral-800',
                   'flex items-center cursor-pointer py-2 px-2.5 font-semibold gap-2 hover:bg-neutral-800 rounded-lg text-gray-200'
                 )}
                 onClick={() =>
@@ -98,7 +98,7 @@ export default function ElementFilter({ orderBy, theme, t, search, setSearch }: 
               </div>
               <div
                 className={cn(
-                  t === 'css' && 'bg-neutral-800',
+                  t === false && 'bg-neutral-800',
                   'flex items-center cursor-pointer py-2 px-2.5 font-semibold gap-2 hover:bg-neutral-800 rounded-lg text-gray-200'
                 )}
                 onClick={() =>
@@ -125,10 +125,10 @@ export default function ElementFilter({ orderBy, theme, t, search, setSearch }: 
             </div>
             <div className='h-[30px] w-[2px] bg-neutral-800 mx-1 hidden lg:block' />
             <Select
-              value={orderBy}
+              value={sortBy}
               onValueChange={(value: string) => {
                 updateQueryParams({
-                  orderBy: value
+                  sortBy: value
                   // page: '1'
                 })
               }}
@@ -148,7 +148,7 @@ export default function ElementFilter({ orderBy, theme, t, search, setSearch }: 
                     >
                       <path d='M20 4H4v2.586a1 1 0 0 0 .293.707l5.414 5.414a1 1 0 0 1 .293.707V18l4 3v-7.586a1 1 0 0 1 .293-.707l5.414-5.414A1 1 0 0 0 20 6.586V4Z' />
                     </svg>
-                    Sort: {orderBy || 'Randomized'}
+                    Sort: {sortBy || 'Randomized'}
                   </div>
                 </SelectValue>
               </SelectTrigger>
@@ -188,8 +188,8 @@ export default function ElementFilter({ orderBy, theme, t, search, setSearch }: 
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='all'>All</SelectItem>
-                <SelectItem value='dark'>Dark</SelectItem>
-                <SelectItem value='light'>Light</SelectItem>
+                <SelectItem value='DARK'>Dark</SelectItem>
+                <SelectItem value='LIGHT'>Light</SelectItem>
               </SelectContent>
             </Select>
             <form

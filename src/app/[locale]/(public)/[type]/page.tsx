@@ -13,13 +13,34 @@ export default function Page() {
   const router = useRouter()
   const pathname = usePathname()
   const [search, setSearch] = useState(searchParams.get('search') || '')
-    const page = searchParams.get('page') || '1'
-    const limit = searchParams.get('limit') || '12'
-    const orderBy = searchParams.get('orderBy') || 'randomized'
-    const theme = searchParams.get('theme') || 'all'
-    const t = searchParams.get('t') || 'all'
+    // const page = searchParams.get('page') || '1'
+    // const limit = searchParams.get('limit') || '12'
+    // const orderBy = searchParams.get('orderBy') || 'randomized'
+    // const theme = searchParams.get('theme') || 'all'
+    // const t = searchParams.get('t') || 'all'
+const page = Number(searchParams.get('page') || 1)
+const limit = Number(searchParams.get('limit') || 12)
 
-  const paramss = useMemo(() => ({ page, limit, orderBy, theme, t }), [page, limit, orderBy, theme, t])
+const sortBy = (searchParams.get('sortBy') as 'randomized' | 'favorites' | 'recent') || 'randomized'
+
+const orderBy = (searchParams.get('orderBy') as 'asc' | 'desc') || 'desc'
+
+const theme = ['DARK', 'LIGHT'].includes(searchParams.get('theme') || '')
+  ? (searchParams.get('theme') as 'DARK' | 'LIGHT')
+  : undefined
+const tParam = searchParams.get('t')
+const t = tParam === 'tailwind' ? true : tParam === 'css' ? false : undefined
+  const paramss = useMemo(
+    () => ({
+      page,
+      limit,
+      sortBy,
+      orderBy,
+      theme,
+      t
+    }),
+    [page, limit, sortBy, orderBy, theme, t]
+  )
 const createPageURL = useCallback(
   (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -41,7 +62,7 @@ const createPageURL = useCallback(
       <ElementNav />
       <div className='w-full min-w-0 z-10'>
         <main className='w-full'>
-          <ElementFilter orderBy={orderBy} theme={theme} t={t} search={search} setSearch={setSearch} />
+          <ElementFilter sortBy={sortBy} theme={theme} t={t} search={search} setSearch={setSearch} />
           <section className='grid gap-y-5 gap-x-3.5 content-stretch items-stretch w-full mb-24 max-xs:grid-cols-1 max-xs:gap-2.5 [grid-template-columns:repeat(auto-fill,minmax(294px,1fr))]'>
             {elementList.map((element) => (
               <Element element={element} key={element.id} />

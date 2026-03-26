@@ -63,3 +63,43 @@ export const OrderStatusValues = [
 ] as const
 
 export const ManagerRoom = 'manager' as const
+
+export const OrderElementBy = {
+  Randomized: 'randomized',
+  Favorites: 'favorites',
+  Recent: 'recent',
+} as const
+
+export const SortUserBy = {
+  Elements: 'elements',
+} as const
+
+export const OrderBy = {
+  Asc: 'asc',
+  Desc: 'desc',
+} as const
+
+export const UserStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  BLOCKED: 'BLOCKED',
+} as const
+
+export type ElementStatusType = (typeof ElementStatus)[keyof typeof ElementStatus]
+
+export const RoleName = {
+  Admin: 'ADMIN',
+  Moderator: 'MODERATOR',
+  Client: 'CLIENT',
+  Guest: 'GUEST',
+} as const
+
+export const HTTPMethod = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+  PATCH: 'PATCH',
+  OPTIONS: 'OPTIONS',
+  HEAD: 'HEAD',
+} as const

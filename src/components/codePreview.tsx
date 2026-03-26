@@ -3,9 +3,9 @@
 import { useEffect, useRef } from 'react'
 
 type Props = {
-  isTailwind: boolean
+  isTailwind: boolean | null
   html: string
-  css: string
+  css: string | null
 }
 
 export default function CodePreview({ isTailwind, html, css }: Props) {

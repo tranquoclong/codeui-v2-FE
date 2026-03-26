@@ -6,7 +6,7 @@ import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { type ElementType } from '@/schemaValidations/element.schema'
+import { type ElementResType } from '@/schemaValidations/element.schema'
 import { ElementsMultiDeleteDialog } from './elements-multi-delete-dialog'
 
 type DataTableBulkActionsProps<TData> = {
@@ -18,7 +18,7 @@ export function DataTableBulkActions<TData>({ table }: DataTableBulkActionsProps
   const selectedRows = table.getFilteredSelectedRowModel().rows
 
   const handleBulkStatusChange = (status: 'active' | 'inactive') => {
-    const selectedUsers = selectedRows.map((row) => row.original as ElementType)
+    const selectedUsers = selectedRows.map((row) => row.original as ElementResType)
     toast({
       description: `${status === 'active' ? 'Activated' : 'Deactivated'} ${selectedUsers.length} user${selectedUsers.length > 1 ? 's' : ''}`
     })
@@ -26,7 +26,7 @@ export function DataTableBulkActions<TData>({ table }: DataTableBulkActionsProps
   }
 
   const handleBulkInvite = () => {
-    const selectedUsers = selectedRows.map((row) => row.original as ElementType)
+    const selectedUsers = selectedRows.map((row) => row.original as ElementResType)
     toast({
       description: `Invited ${selectedUsers.length} user${selectedUsers.length > 1 ? 's' : ''}`
     })

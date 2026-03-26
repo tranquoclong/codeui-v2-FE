@@ -127,11 +127,12 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
   const [elementResult] = await Promise.allSettled([
     wrapServerApi(() =>
       elementApiRequest.list({
-        page: '1',
-        limit: '10',
-        orderBy: 'randomized',
-        theme: 'all',
-        t: 'all'
+        page: 1,
+        limit: 10,
+        sortBy: 'randomized',
+        orderBy: 'desc'
+        // theme: 'all',
+        // t: 'all'
       })
     )
   ])

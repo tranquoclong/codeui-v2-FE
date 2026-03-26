@@ -3,11 +3,11 @@
 import { Link } from '@/i18n/routing'
 import CodePreview from './codePreview'
 import { useGetElementCodeQuery } from '@/queries/useElement'
-import { ElementType } from '@/schemaValidations/element.schema'
+import { ElementResType } from '@/schemaValidations/element.schema'
 
 type Props = {
   showInfor?: boolean
-  element: ElementType
+  element: ElementResType
 }
 const Element = ({ element, showInfor = true }: Props) => {
   const elementCodeQuery = useGetElementCodeQuery({ id: element.id, enabled: Boolean(element.id) })
@@ -65,9 +65,9 @@ const Element = ({ element, showInfor = true }: Props) => {
           {showInfor && (
             <div className='flex items-center justify-between pr-[2px] pl-[4px] mt-[2px] text-sm h-[28px] px-1'>
               <div className=''>
-                <Link href={`/profile/${element.title}`}>
+                <Link href={`/profile/${element.createdById}`}>
                   <div className='block truncate select-none pr-[5px] text-gray-200 flex items-center gap-1.5'>
-                    {element.title}
+                    {element.createdBy.name}
                   </div>
                 </Link>
               </div>

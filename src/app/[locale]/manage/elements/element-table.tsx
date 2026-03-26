@@ -53,7 +53,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { ElementListResType, ElementType } from '@/schemaValidations/element.schema'
+import { ElementListResType, ElementResType } from '@/schemaValidations/element.schema'
 import { Badge } from '@/components/ui/badge'
 import { endOfDay, format, startOfDay, subDays, startOfMonth } from 'date-fns'
 
@@ -71,6 +71,7 @@ const ElementTableContext = createContext<{
   setElementDelete: (value: ElementItem | null) => {}
 })
 
+
 export const dateRangeFilterFn = (row: any, columnId: string, value: [string, string]) => {
   const rowDate = new Date(row.getValue(columnId))
   const [from, to] = value || []
@@ -81,7 +82,7 @@ export const dateRangeFilterFn = (row: any, columnId: string, value: [string, st
   return true
 }
 
-export const columns: ColumnDef<ElementType>[] = [
+export const columns: ColumnDef<ElementResType>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -115,12 +116,12 @@ export const columns: ColumnDef<ElementType>[] = [
     header: 'Title',
     cell: ({ row }) => <div className='capitalize'>{row.getValue('title')}</div>
   },
-  {
-    id: 'brandName',
-    header: 'Type',
-    accessorFn: (row) => row.brand?.name,
-    cell: ({ getValue }) => <div className='capitalize'>{getValue<string>()}</div>
-  },
+  // {
+  //   id: 'brandName',
+  //   header: 'Type',
+  //   accessorFn: (row) => row.brand?.name,
+  //   cell: ({ getValue }) => <div className='capitalize'>{getValue<string>()}</div>
+  // },
   {
     accessorKey: 'theme',
     header: 'Theme',
@@ -151,7 +152,7 @@ export const columns: ColumnDef<ElementType>[] = [
     enableHiding: false,
     enableSorting: false
   },
-    {
+  {
     accessorKey: 'createdAt',
     header: 'Created At',
     cell: ({ getValue }) => {
@@ -256,7 +257,7 @@ function AlertDialogDeleteElement({
           }
         }}
         handleConfirm={deleteElement}
-        disabled={value.trim() !== elementDelete?.brand.name}
+        // disabled={value.trim() !== elementDelete?.brand.name}
         title={
           <span className='text-destructive'>
             <AlertTriangle className='me-1 inline-block stroke-destructive' size={18} /> Delete User
@@ -265,7 +266,7 @@ function AlertDialogDeleteElement({
         desc={
           <div className='space-y-4'>
             <p className='mb-2'>
-              Are you sure you want to delete <span className='font-bold'>{elementDelete?.brand.name}</span>?
+              {/* Are you sure you want to delete <span className='font-bold'>{elementDelete?.brand.name}</span>? */}
               <br />
               This action will permanently remove the user with the role of <span className='font-bold'>
                 Element
@@ -302,16 +303,38 @@ const initToDate = endOfDay(new Date())
 type DatePreset = 'today' | '7d' | '30d' | 'month' | null
 
 export default function ElementTable() {
-  const searchParam = useSearchParams()
+  const searchParams = useSearchParams()
   // const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1
-  const page = searchParam.get('page') || '1'
-  const limit = searchParam.get('limit') || '30'
-  const orderBy = searchParam.get('orderBy') || 'randomized'
-  const theme = searchParam.get('theme') || 'all'
-  const t = searchParam.get('t') || 'all'
-  const pageIndex = Number(page) - 1
-  const paramss = useMemo(() => ({ page, limit, orderBy, theme, t }), [page, limit, orderBy, theme, t])
+  // const page = searchParam.get('page') || '1'
+  // const limit = searchParam.get('limit') || '30'
+  // const orderBy = searchParam.get('orderBy') || 'randomized'
+  // const theme = searchParam.get('theme') || 'all'
+  // const t = searchParam.get('t') || 'all'
+  // const paramss = useMemo(() => ({ page, limit, orderBy, theme, t }), [page, limit, orderBy, theme, t])
   // const params = Object.fromEntries(searchParam.entries())
+  const page = Number(searchParams.get('page') || 1)
+  const limit = Number(searchParams.get('limit') || 12)
+  const pageIndex = Number(page) - 1
+  const sortBy = (searchParams.get('sortBy') as 'randomized' | 'favorites' | 'recent') || 'randomized'
+  
+  const orderBy = (searchParams.get('orderBy') as 'asc' | 'desc') || 'desc'
+  
+  const theme = ['DARK', 'LIGHT'].includes(searchParams.get('theme') || '')
+    ? (searchParams.get('theme') as 'DARK' | 'LIGHT')
+    : undefined
+  const tParam = searchParams.get('t')
+  const t = tParam === 'true' ? true : tParam === 'false' ? false : undefined
+    const paramss = useMemo(
+      () => ({
+        page,
+        limit,
+        sortBy,
+        orderBy,
+        theme,
+        t
+      }),
+      [page, limit, sortBy, orderBy, theme, t]
+    )
   const [elementIdEdit, setElementIdEdit] = useState<number>(0)
   const [elementDelete, setElementDelete] = useState<ElementItem | null>(null)
   const elementListQuery = useManageElementListQuery(paramss)
