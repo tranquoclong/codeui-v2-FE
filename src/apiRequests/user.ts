@@ -3,7 +3,7 @@ import { GetUsersQueryType, GetUsersResType } from '@/schemaValidations/user.sch
 import queryString from 'query-string'
 
 const prefix = '/users'
-const accountApiRequest = {
+const userApiRequest = {
     list: (queryParams: GetUsersQueryType) => {
         const query = queryString.stringify(queryParams, {
             skipNull: true,
@@ -15,4 +15,4 @@ const accountApiRequest = {
     },
 }
 
-export default accountApiRequest
+export default userApiRequest

@@ -50,7 +50,7 @@ const accountApiRequest = {
   getEmployee: (id: number) =>
     http.get<AccountResType>(`${prefix}/detail/${id}`),
   getProfile: (id: number) =>
-    http.get<AccountResType>(`/users/profile/${id}`),
+    http.get<AccountResType>(`/profile/${id}`),
   deleteEmployee: (id: number) =>
     http.delete<AccountResType>(`${prefix}/detail/${id}`),
   guestList: (queryParams: GetGuestListQueryParamsType) =>

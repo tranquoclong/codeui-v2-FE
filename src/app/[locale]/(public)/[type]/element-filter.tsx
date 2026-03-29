@@ -2,26 +2,26 @@
 
 import { useMemo, useState, useEffect, useRef } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useRouter } from '@/i18n/routing'
+import { useRouter, usePathname } from '@/i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { RainbowButton } from '@/components/magicui/rainbow-button'
 
 interface Props {
   sortBy: string
-  theme: 'DARK' | 'LIGHT' | undefined
-  t: boolean | undefined
+  theme: 'DARK' | 'LIGHT' | 'ALL'
+  t: string | undefined
   search: string
   setSearch: (value: string) => void
 }
 export default function ElementFilter({ sortBy, theme, t, search, setSearch }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
-
+  const pathname = usePathname()
   const updateQueryParams = (updates: Record<string, string | null | undefined>, options?: { resetPage?: boolean }) => {
     const params = new URLSearchParams(searchParams.toString())
     Object.entries(updates).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === '') {
+      if (value === undefined || value === null || value === '' || value === 'ALL') {
         params.delete(key)
       } else {
         params.set(key, value)
@@ -30,7 +30,7 @@ export default function ElementFilter({ sortBy, theme, t, search, setSearch }: P
     if (options?.resetPage) {
       params.set('page', '1')
     }
-    router.replace(`/elements?${params.toString()}`)
+    router.replace(`${pathname}?${params.toString()}`)
   }
   return (
     <div className='pt-3.5 pb-2.5 z-60 relative justify-between items-end flex-wrap'>
@@ -70,7 +70,7 @@ export default function ElementFilter({ sortBy, theme, t, search, setSearch }: P
               </div>
               <div
                 className={cn(
-                  t && 'bg-neutral-800',
+                  t === 'tailwind' && 'bg-neutral-800',
                   'flex items-center cursor-pointer py-2 px-2.5 font-semibold gap-2 hover:bg-neutral-800 rounded-lg text-gray-200'
                 )}
                 onClick={() =>
@@ -98,7 +98,7 @@ export default function ElementFilter({ sortBy, theme, t, search, setSearch }: P
               </div>
               <div
                 className={cn(
-                  t === false && 'bg-neutral-800',
+                  t === 'css' && 'bg-neutral-800',
                   'flex items-center cursor-pointer py-2 px-2.5 font-semibold gap-2 hover:bg-neutral-800 rounded-lg text-gray-200'
                 )}
                 onClick={() =>
@@ -153,7 +153,7 @@ export default function ElementFilter({ sortBy, theme, t, search, setSearch }: P
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='randomized'>Randomized</SelectItem>
+                <SelectItem value='ALL'>Randomized</SelectItem>
                 <SelectItem value='favorites'>Favorites</SelectItem>
                 <SelectItem value='recent'>Recent</SelectItem>
               </SelectContent>
@@ -187,7 +187,7 @@ export default function ElementFilter({ sortBy, theme, t, search, setSearch }: P
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='all'>All</SelectItem>
+                <SelectItem value='ALL'>All</SelectItem>
                 <SelectItem value='DARK'>Dark</SelectItem>
                 <SelectItem value='LIGHT'>Light</SelectItem>
               </SelectContent>

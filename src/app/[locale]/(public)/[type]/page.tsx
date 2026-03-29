@@ -1,55 +1,65 @@
 'use client'
 
-import { useMemo, useState, useEffect, useRef, useCallback } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import Element from '@/components/element'
 import { Link, usePathname, useRouter } from '@/i18n/routing'
 import { useSearchParams, useParams } from 'next/navigation'
 import { useElementListQuery } from '@/queries/useElement'
 import ElementFilter from './element-filter'
 import ElementNav from './element-nav'
+import { SkeletonElement } from '@/components/ui/skeletonElement'
 
+const brand = [
+  { id: undefined, href: '/elements' },
+  { id: 1, href: '/buttons' },
+  { id: 2, href: '/switches' },
+  { id: 3, href: '/checkboxes' },
+  { id: 4, href: '/cards' },
+  { id: 5, href: '/loaders' },
+  { id: 6, href: '/inputs' },
+  { id: 7, href: '/forms' },
+  { id: 8, href: '/patterns' },
+  { id: 9, href: '/radio-buttons' },
+  { id: 10, href: '/tooltips' }
+]
 export default function Page() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
   const [search, setSearch] = useState(searchParams.get('search') || '')
-    // const page = searchParams.get('page') || '1'
-    // const limit = searchParams.get('limit') || '12'
-    // const orderBy = searchParams.get('orderBy') || 'randomized'
-    // const theme = searchParams.get('theme') || 'all'
-    // const t = searchParams.get('t') || 'all'
-const page = Number(searchParams.get('page') || 1)
-const limit = Number(searchParams.get('limit') || 12)
+  const page = Number(searchParams.get('page') || 1)
+  const limit = Number(searchParams.get('limit') || 20)
+  const brandMap = Object.fromEntries(brand.map((item) => [item.href, item.id]))
+  const brandIds = brandMap[pathname]
+  const sortBy = (searchParams.get('sortBy') as 'randomized' | 'favorites' | 'recent') || 'randomized'
 
-const sortBy = (searchParams.get('sortBy') as 'randomized' | 'favorites' | 'recent') || 'randomized'
+  const orderBy = (searchParams.get('orderBy') as 'asc' | 'desc') || 'desc'
 
-const orderBy = (searchParams.get('orderBy') as 'asc' | 'desc') || 'desc'
-
-const theme = ['DARK', 'LIGHT'].includes(searchParams.get('theme') || '')
-  ? (searchParams.get('theme') as 'DARK' | 'LIGHT')
-  : undefined
-const tParam = searchParams.get('t')
-const t = tParam === 'tailwind' ? true : tParam === 'css' ? false : undefined
+  const theme = ['DARK', 'LIGHT', 'ALL'].includes(searchParams.get('theme') || '')
+    ? (searchParams.get('theme') as 'DARK' | 'LIGHT' | 'ALL')
+    : 'ALL'
+  const t = searchParams.get('t') || undefined
   const paramss = useMemo(
     () => ({
       page,
       limit,
       sortBy,
       orderBy,
-      theme,
-      t
+      theme: theme === 'ALL' ? undefined : theme,
+      t,
+      brandIds: brandIds ? [brandIds] : undefined
     }),
-    [page, limit, sortBy, orderBy, theme, t]
+    [page, limit, sortBy, orderBy, theme, t, brandIds]
   )
-const createPageURL = useCallback(
-  (newPage: number) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('page', newPage.toString())
-    if (search) params.set('search', search)
-    return `${pathname}?${params.toString()}`
-  },
-  [searchParams, pathname, search]
-)
+  const createPageURL = useCallback(
+    (newPage: number) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('page', newPage.toString())
+      if (search) params.set('search', search)
+      return `${pathname}?${params.toString()}`
+    },
+    [searchParams, pathname, search]
+  )
   const elementListQuery = useElementListQuery(paramss)
   const refetchElementList = elementListQuery.refetch
   const isFetching = elementListQuery.isFetching
@@ -64,65 +74,73 @@ const createPageURL = useCallback(
         <main className='w-full'>
           <ElementFilter sortBy={sortBy} theme={theme} t={t} search={search} setSearch={setSearch} />
           <section className='grid gap-y-5 gap-x-3.5 content-stretch items-stretch w-full mb-24 max-xs:grid-cols-1 max-xs:gap-2.5 [grid-template-columns:repeat(auto-fill,minmax(294px,1fr))]'>
-            {elementList.map((element) => (
-              <Element element={element} key={element.id} />
-            ))}
-            <div className='grid col-span-full gap-3.5 grid-cols-2'>
-              <button
-                onClick={() => {
-                  if (currentPage > 1) {
-                    router.push(createPageURL(currentPage - 1))
-                  }
-                }}
-                disabled={isFetching || currentPage <= 1}
-                className={`flex items-center justify-start p-5 bg-[#252525] rounded-lg text-[20px] font-semibold text-lg button--left max-[600px]:p-3.5 max-[600px]:text-[16px] max-[450px]:p-2.5 max-[450px]:text-[14px] transition-all ${
-                  currentPage <= 1
-                    ? 'text-gray-600 cursor-not-allowed'
-                    : 'text-gray-400 hover:text-white hover:bg-[#333]'
-                }`}
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  stroke='currentColor'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  className='w-6 h-6 text-inherit mr-5 max-[600px]:w-7 max-[600px]:h-7 max-[600px]:mr-2.5 max-[450px]:w-5 max-[450px]:h-5'
-                >
-                  <path d='M8.83 6a30.23 30.23 0 0 0-5.62 5.406A.949.949 0 0 0 3 12m5.83 6a30.233 30.233 0 0 1-5.62-5.406A.949.949 0 0 1 3 12m0 0h18' />
-                </svg>
-                Previous page
-              </button>
-              <button
-                onClick={() => {
-                  if (currentPage < totalPages) {
-                    router.push(createPageURL(currentPage + 1))
-                  }
-                }}
-                disabled={isFetching || currentPage >= totalPages}
-                className={`flex items-center justify-end p-5 bg-[#252525] rounded-lg text-[20px] font-semibold text-lg button--right col-start-2 max-[600px]:p-3.5 max-[600px]:text-[16px] max-[450px]:p-2.5 max-[450px]:text-[14px] transition-all ${
-                  currentPage >= totalPages
-                    ? 'text-gray-600 cursor-not-allowed'
-                    : 'text-gray-400 hover:text-white hover:bg-[#333]'
-                }`}
-              >
-                Next page
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  className='w-6 h-6 text-inherit mr-0 ml-5 max-[600px]:ml-2.5'
-                  stroke='currentColor'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                >
-                  <path d='M15.17 6a30.23 30.23 0 0 1 5.62 5.406c.14.174.21.384.21.594m-5.83 6a30.232 30.232 0 0 0 5.62-5.406A.949.949 0 0 0 21 12m0 0H3' />
-                </svg>
-              </button>
-            </div>
+            {elementListQuery.isLoading ? (
+              <SkeletonElement total={12} />
+            ) : elementList.length > 0 ? (
+              <>
+                {elementList.map((element) => (
+                  <Element element={element} key={element.id} />
+                ))}
+                <div className='grid col-span-full gap-3.5 grid-cols-2'>
+                  <button
+                    onClick={() => {
+                      if (currentPage > 1) {
+                        router.push(createPageURL(currentPage - 1))
+                      }
+                    }}
+                    disabled={isFetching || currentPage <= 1}
+                    className={`flex items-center justify-start p-5 bg-[#252525] rounded-lg text-[20px] font-semibold text-lg button--left max-[600px]:p-3.5 max-[600px]:text-[16px] max-[450px]:p-2.5 max-[450px]:text-[14px] transition-all ${
+                      currentPage <= 1
+                        ? 'text-gray-600 cursor-not-allowed'
+                        : 'text-gray-400 hover:text-white hover:bg-[#333]'
+                    }`}
+                  >
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      className='w-6 h-6 text-inherit mr-5 max-[600px]:w-7 max-[600px]:h-7 max-[600px]:mr-2.5 max-[450px]:w-5 max-[450px]:h-5'
+                    >
+                      <path d='M8.83 6a30.23 30.23 0 0 0-5.62 5.406A.949.949 0 0 0 3 12m5.83 6a30.233 30.233 0 0 1-5.62-5.406A.949.949 0 0 1 3 12m0 0h18' />
+                    </svg>
+                    Previous page
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (currentPage < totalPages) {
+                        router.push(createPageURL(currentPage + 1))
+                      }
+                    }}
+                    disabled={isFetching || currentPage >= totalPages}
+                    className={`flex items-center justify-end p-5 bg-[#252525] rounded-lg text-[20px] font-semibold text-lg button--right col-start-2 max-[600px]:p-3.5 max-[600px]:text-[16px] max-[450px]:p-2.5 max-[450px]:text-[14px] transition-all ${
+                      currentPage >= totalPages
+                        ? 'text-gray-600 cursor-not-allowed'
+                        : 'text-gray-400 hover:text-white hover:bg-[#333]'
+                    }`}
+                  >
+                    Next page
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      className='w-6 h-6 text-inherit mr-0 ml-5 max-[600px]:ml-2.5'
+                      stroke='currentColor'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                    >
+                      <path d='M15.17 6a30.23 30.23 0 0 1 5.62 5.406c.14.174.21.384.21.594m-5.83 6a30.232 30.232 0 0 0 5.62-5.406A.949.949 0 0 0 21 12m0 0H3' />
+                    </svg>
+                  </button>
+                </div>
+              </>
+            ) : (
+              'khong tim thay'
+            )}
           </section>
         </main>
       </div>

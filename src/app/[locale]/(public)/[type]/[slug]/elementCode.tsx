@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 import { Link, useRouter } from '@/i18n/routing'
 import EditorElement from '../../create/editor'
 import { useGetElementQuery } from '@/queries/useElement'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { format } from 'date-fns'
+import Comment from './comment'
 
 interface Props {
   id: number
@@ -52,17 +55,16 @@ export default function ElementCode({ id }: Props) {
             <h1 className='flex items-center gap-2 text-base text-gray-400'>
               Input by{' '}
               <Link
-                href='#'
+                href={`/profile/${element?.createdById}`}
                 className='flex items-center gap-3 p-1 pr-2 font-semibold transition-colors rounded text-offwhite hover:bg-neutral-800'
               >
                 <span className='relative flex shrink-0 overflow-hidden rounded bg-black w-6 h-6'>
-                  <img
-                    className='aspect-square h-full w-full m-0'
-                    alt='Yaseen549'
-                    src='https://avatars.githubusercontent.com/u/43935210?v=4&s=24'
-                  />
+                  <Avatar className='aspect-square h-full w-full m-0'>
+                    <AvatarImage src={element?.createdBy.avatar ?? undefined} alt={element?.createdBy.name} />
+                    <AvatarFallback>{element?.createdBy.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                  </Avatar>
                 </span>
-                Yaseen549
+                {element?.createdBy.name}
               </Link>
             </h1>
             <div className='flex items-center gap-3 text-gray-400'>
@@ -79,7 +81,7 @@ export default function ElementCode({ id }: Props) {
                 >
                   <path d='M3 14c0-2.188 2.7-7 9-7s9 4.813 9 7m-6 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z' />
                 </svg>
-                30K
+                10K
               </div>
               <div className='flex items-center gap-1'>
                 <svg
@@ -94,7 +96,7 @@ export default function ElementCode({ id }: Props) {
                 >
                   <path d='M5 9c0-1.861 0-2.792.245-3.545a5 5 0 0 1 3.21-3.21C9.208 2 10.139 2 12 2s2.792 0 3.545.245a5 5 0 0 1 3.21 3.21C19 6.208 19 7.139 19 9v13l-1.794-1.537c-1.848-1.584-2.771-2.376-3.808-2.678a5 5 0 0 0-2.796 0c-1.037.302-1.96 1.094-3.808 2.678L5 22V9Z' />
                 </svg>
-                514
+                100
               </div>
             </div>
           </div>
@@ -275,271 +277,7 @@ export default function ElementCode({ id }: Props) {
           </div>
         </div>
         <div className='col-span-full grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 mt-10 items-start'>
-          <div className='flex gap-10 flex-col'>
-            <div className='space-y-4'>
-              <section className=''>
-                <div className='mb-4 flex items-center gap-3'>
-                  <h3 className='font-body text-gray-400'>Comments</h3>
-                  <span className='text-dark-100 text-sm font-semibold'>2 </span>
-                </div>
-                <div className='flex gap-4 mb-4'>
-                  <form
-                    method='post'
-                    action='/resource/comments/add'
-                    className='relative p-4 w-full bg-neutral-800 flex items-start gap-3 rounded-xl overflow-hidden false'
-                  >
-                    <span className='relative shrink-0 overflow-hidden rounded bg-black w-10 h-10 hidden sm:block'>
-                      <img
-                        className='aspect-square h-full w-full m-0'
-                        alt='long_9040'
-                        src='https://lh3.googleusercontent.com/a/ACg8ocLUSliDLLtgf7gmYOzm1j0ZB35sdDyIuD0fg8Z4L1pLQ2m1BLHH=s96-c'
-                      />
-                    </span>
-                    <input type='hidden' name='postId' defaultValue='2c7df4fd-e2fb-4ff2-bf45-d8acc04c3e1c' />
-                    <input type='hidden' name='commentType' defaultValue='general' />
-                    <textarea
-                      className='flex w-full rounded-md border-2 px-3 py-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm min-h-[40px] resize-none flex-1 bg-neutral-700 text-gray-200 placeholder:text-gray-400 border-dark-300 focus:border-gray-700'
-                      name='content'
-                      id='content'
-                      rows={1}
-                      placeholder='Add a comment...'
-                      style={{ height: 37 }}
-                      defaultValue={''}
-                    />
-                    <div className='flex flex-col items-center'>
-                      <button
-                        className='inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-8'
-                        type='submit'
-                      >
-                        Send
-                      </button>
-                      <p className='text-xs text-dark-100 transition duration-300 pointer-events-none transform absolute opacity-0 translate-y-0'>
-                        <span className='text-white'>0</span>/244
-                      </p>
-                    </div>
-                  </form>
-                </div>
-                <div className='grid grid-cols-1 gap-3'>
-                  <div
-                    className='flex relative gap-4 lg:gap-6 bg-neutral-800 py-4 px-4 lg:px-6 rounded-xl overflow-hidden '
-                    style={{ wordBreak: 'break-word' }}
-                  >
-                    <form
-                      method='post'
-                      action='/resource/comments/vote'
-                      className='false flex flex-col items-center gap-1 min-w-[44px] max-h-[100px] justify-center  rounded-lg overflow-hidden transition bg-gradient-to-t from-dark-500 via-transparent to-dark-500 false '
-                    >
-                      <input type='hidden' name='commentId' defaultValue={853} />
-                      <input type='hidden' name='postId' defaultValue='2c7df4fd-e2fb-4ff2-bf45-d8acc04c3e1c' />
-                      <button
-                        className='px-3 py-2 transition hover:bg-neutral-700 cursor-pointer bg-opacity-30 bg-transparent border-none'
-                        name='value'
-                        value={1}
-                      >
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          className='w-5 h-5 text-gray-400 block'
-                          viewBox='0 0 24 24'
-                          fill='none'
-                          stroke='currentColor'
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          strokeWidth={2}
-                        >
-                          <path d='M12 19v-7m0 0V5m0 7H5m7 0h7' />
-                        </svg>
-                      </button>
-                      <div className='text-sm font-semibold relative text-gray-400'>
-                        <div className='h-[20px] w-[44px] relative overflow-hidden'>
-                          <div className='flex flex-col gap-2 w-full h-[20px] absolute items-center justify-center text-center pointer-events-none transition transform false false'>
-                            <div className='w-12'>3</div>
-                            <div className='w-12'>2</div>
-                            <div className='w-12'>1</div>
-                          </div>
-                        </div>
-                      </div>
-                      <button
-                        className='px-3 py-2 transition hover:bg-neutral-700 cursor-pointer bg-opacity-30 bg-transparent border-none'
-                        name='value'
-                        value={-1}
-                      >
-                        <svg
-                          viewBox='0 0 24 24'
-                          fill='none'
-                          xmlns='http://www.w3.org/2000/svg'
-                          className='w-5 h-5 text-gray-400 block'
-                        >
-                          <path
-                            d='M5 12H19'
-                            stroke='currentColor'
-                            strokeWidth={2}
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                        </svg>
-                      </button>
-                    </form>
-                    <div>
-                      <div className='flex mb-3 items-center'>
-                        <Link href='#'>
-                          <span className='relative flex shrink-0 overflow-hidden rounded bg-black w-[50px] h-[50px] lg:w-[40px] lg:h-[40px] mr-3'>
-                            <img
-                              className='aspect-square h-full w-full m-0'
-                              alt='shibalSaekiya'
-                              src='https://avatars.githubusercontent.com/u/166676474?v=4&s=48'
-                            />
-                          </span>
-                        </Link>
-                        <div className='flex flex-col items-start'>
-                          <div className='font-bold text-gray-200 text-base leading-2 flex items-center gap-4'>
-                            <Link href='#' className='block'>
-                              shibalSaekiya
-                            </Link>
-                          </div>
-                        </div>
-                        <div className='flex items-center gap-3 ml-3'>
-                          <span className=' text-gray-400 block text-sm'>Jul 12, 2024</span>
-                        </div>
-                      </div>
-                      <p className='text-gray-200 text-base block'> thanks </p>
-                      <div className='lg:absolute top-3 right-4 mt-6 lg:mt-0 font-semibold flex items-center gap-2 -ml-2 lg:ml-0'>
-                        <button className='flex items-center gap-2 text-gray-400 font-sans cursor-pointer bg-transparent hover:bg-neutral-700 px-2 py-2 rounded border-none '>
-                          <svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' className='w-4 h-4'>
-                            <path
-                              d='M8.03089 4C6.57669 5.05865 5.2706 6.29537 4.14485 7.67887C4.04828 7.79755 4 7.94044 4 8.08333M8.03089 12.1667C6.57669 11.108 5.2706 9.8713 4.14485 8.4878C4.04828 8.36912 4 8.22623 4 8.08333M4 8.08333H14.963C17.7448 8.08333 20 10.3033 20 13.0417C20 15.7801 17.7448 18 14.963 18H12'
-                              stroke='currentColor'
-                              strokeWidth={2}
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                            />
-                          </svg>
-                          Reply
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='w-full relative flex mb-2'>
-                    <div className='w-12 lg:w-24 h-full py-2 flex justify-center'>
-                      <button className='h-full border-none bg-white transition opacity-30 w-1 rounded-full' />
-                    </div>
-                    <div className='flex flex-col w-full gap-3'>
-                      <div
-                        className='flex relative gap-4 lg:gap-6 bg-neutral-800 py-4 px-4 lg:px-6 rounded-xl overflow-hidden '
-                        style={{ wordBreak: 'break-word' }}
-                      >
-                        <form
-                          method='post'
-                          action='/resource/comments/vote'
-                          className='false flex flex-col items-center gap-1 min-w-[44px] max-h-[100px] justify-center  rounded-lg overflow-hidden transition bg-gradient-to-t from-dark-500 via-transparent to-dark-500 false '
-                        >
-                          <input type='hidden' name='commentId' defaultValue={23084} />
-                          <input type='hidden' name='postId' defaultValue='2c7df4fd-e2fb-4ff2-bf45-d8acc04c3e1c' />
-                          <button
-                            className='px-3 py-2 transition hover:bg-neutral-700 cursor-pointer bg-opacity-30 bg-transparent border-none'
-                            name='value'
-                            value={1}
-                          >
-                            <svg
-                              xmlns='http://www.w3.org/2000/svg'
-                              className='w-5 h-5 text-gray-400 block'
-                              viewBox='0 0 24 24'
-                              fill='none'
-                              stroke='currentColor'
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                            >
-                              <path d='M12 19v-7m0 0V5m0 7H5m7 0h7' />
-                            </svg>
-                          </button>
-                          <div className='text-sm font-semibold relative text-gray-400'>
-                            <div className='h-[20px] w-[44px] relative overflow-hidden'>
-                              <div className='flex flex-col gap-2 w-full h-[20px] absolute items-center justify-center text-center pointer-events-none transition transform false false'>
-                                <div className='w-12'>2</div>
-                                <div className='w-12'>1</div>
-                                <div className='w-12'>0</div>
-                              </div>
-                            </div>
-                          </div>
-                          <button
-                            className='px-3 py-2 transition hover:bg-neutral-700 cursor-pointer bg-opacity-30 bg-transparent border-none'
-                            name='value'
-                            value={-1}
-                          >
-                            <svg
-                              viewBox='0 0 24 24'
-                              fill='none'
-                              xmlns='http://www.w3.org/2000/svg'
-                              className='w-5 h-5 text-gray-400 block'
-                            >
-                              <path
-                                d='M5 12H19'
-                                stroke='currentColor'
-                                strokeWidth={2}
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                              />
-                            </svg>
-                          </button>
-                        </form>
-                        <div>
-                          <div className='flex mb-3 items-center'>
-                            <Link href='#'>
-                              <span className='relative flex shrink-0 overflow-hidden rounded bg-black w-[50px] h-[50px] lg:w-[40px] lg:h-[40px] mr-3'>
-                                <img
-                                  className='aspect-square h-full w-full m-0'
-                                  alt='Yaseen549'
-                                  src='https://avatars.githubusercontent.com/u/43935210?v=4&s=48'
-                                />
-                              </span>
-                            </Link>
-                            <div className='flex flex-col items-start'>
-                              <div className='font-bold text-gray-200 text-base leading-2 flex items-center gap-4'>
-                                <Link href='#' className='block'>
-                                  Yaseen549
-                                </Link>
-                              </div>
-                            </div>
-                            <div className='flex items-center gap-3 ml-3'>
-                              <span className=' text-gray-400 block text-sm'>Sep 12, 2025</span>
-                            </div>
-                          </div>
-                          <p className='text-gray-200 text-base block'>
-                            <span className='font-semibold text-gray-50'>@shibalSaekiya</span> You are welcome
-                          </p>
-                          <div className='lg:absolute top-3 right-4 mt-6 lg:mt-0 font-semibold flex items-center gap-2 -ml-2 lg:ml-0' />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-            <section>
-              <div>
-                <Link
-                  href='#'
-                  className='relative h-[200px] flex items-center justify-center cursor-pointer w-full border-2 border-gray-600 bg-transparent border-dashed rounded-lg p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-                >
-                  <span className='flex items-center gap-3 mt-2 font-sans font-semibold text-gray-600 text-md'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      className='w-6 h-6 mx-auto text-gray-600'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke='currentColor'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth={2}
-                    >
-                      <path d='M12 19v-7m0 0V5m0 7H5m7 0h7' />
-                    </svg>
-                    No variations yet, create one!
-                  </span>
-                </Link>
-              </div>
-            </section>
-          </div>
+          <Comment elementId={id} />
           <aside className='space-y-4'>
             <div className=''>
               <h2 className='mb-2 text-2xl font-bold text-gray-100 font-display capitalize max-w-[300px]'>input</h2>
@@ -562,7 +300,7 @@ export default function ElementCode({ id }: Props) {
                   >
                     <path d='M8 2v2.128M8 6V4.128M16 2v2.128M16 6V4.128M20.96 10c.04.788.04 1.755.04 3 0 2.796 0 4.194-.457 5.296a6 6 0 0 1-3.247 3.247C16.194 22 14.796 22 12 22c-2.796 0-4.193 0-5.296-.457a6 6 0 0 1-3.247-3.247C3 17.194 3 15.796 3 13c0-1.245 0-2.212.04-3m17.92 0c-.05-.982-.163-1.684-.417-2.296a6 6 0 0 0-3.247-3.247A5.136 5.136 0 0 0 16 4.127M20.96 10H3.04m0 0c.05-.982.163-1.684.417-2.296a6 6 0 0 1 3.247-3.247A5.135 5.135 0 0 1 8 4.127m0 0C8.941 4 10.172 4 12 4c1.828 0 3.059 0 4 .128' />
                   </svg>{' '}
-                  Jun 9, 2022
+                  {element?.createdAt ? format(new Date(element.createdAt), 'MMM dd, yyyy') : 'Unknown'}
                 </div>
                 <button className='px-4 py-2.5 font-sans flex items-center gap-2 border-none rounded-lg text-base font-semibold transition-colors duration-200 bg-transparent hover:bg-neutral-800 max-md:bg-neutral-800 text-offwhite cursor-pointer group'>
                   <svg
@@ -586,20 +324,22 @@ export default function ElementCode({ id }: Props) {
             </div>
             <section className='rounded-xl md:pr-8 max-w-full md:w-[300px] xl:w-[350px] mb-6'>
               <div className='grid grid-cols-[48px_1fr] gap-4 content-start'>
-                <Link href='#'>
+                <Link href={`/profile/${element?.createdById}`} className='block'>
                   <span className='relative flex shrink-0 overflow-hidden rounded bg-black w-12 h-12'>
-                    <img
-                      className='aspect-square h-full w-full m-0'
-                      alt='Yaseen549'
-                      src='https://avatars.githubusercontent.com/u/43935210?v=4&s=48'
-                    />
+                    <Avatar className='aspect-square h-full w-full m-0'>
+                      <AvatarImage src={element?.createdBy.avatar ?? undefined} alt={element?.createdBy.name} />
+                      <AvatarFallback>{element?.createdBy.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
                   </span>
                 </Link>
                 <div className='max-w-full overflow-hidden'>
-                  <Link href='#' className='block text-xl font-semibold text-gray-200 truncate overflow-hidden'>
-                    Yaseen549
+                  <Link
+                    href={`/profile/${element?.createdById}`}
+                    className='block text-xl font-semibold text-gray-200 truncate overflow-hidden'
+                  >
+                    {element?.createdBy.name}
                   </Link>
-                  <p className='block text-gray-400'>Yaseen</p>
+                  <p className='block text-gray-400'>{element?.createdBy.email}</p>
                 </div>
                 <p className='block text-gray-200 col-span-full text-base'>
                   Multi-stack Developer | MERN Stack | Coding enthusiast | Teaching Students to Code

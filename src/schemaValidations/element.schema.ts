@@ -51,7 +51,7 @@ export const GetElementsQuerySchema = z.object({
   sortBy: z.enum([OrderElementBy.Randomized, OrderElementBy.Favorites, OrderElementBy.Recent]).default(OrderElementBy.Recent),
   orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc),
   theme: z.enum(ThemeElementStatusValues).optional(),
-  t: z.boolean().optional(),
+  t: z.string().optional(),
 })
 
 export const GetManageElementsQuerySchema = GetElementsQuerySchema.extend({
@@ -91,7 +91,7 @@ export const UpdateManageElementBody = CreateElementBody.omit({
   elementOriginalId: true,
   isTailwind: true,
 }).extend({
-  status: z.enum([ElementStatus.DRAFT, ElementStatus.REVIEW, ElementStatus.APPROVED, ElementStatus.REJECTED]),
+  status: z.enum(ElementStatusValues),
   html: z.string().optional(),
   css: z.string().optional(),
 })
@@ -127,12 +127,18 @@ export const ElementRes = ElementSchema.extend({
   createdBy: AccountSchema.pick({
     name: true,
   }),
+  brand: BrandSchema.pick({
+    name: true,
+  }),
 })
 
 export const ElementListRes = z.object({
   data: z.array(
     ElementSchema.extend({
       createdBy: AccountSchema.pick({
+        name: true,
+      }),
+      brand: BrandSchema.pick({
         name: true,
       }),
     }),
@@ -149,6 +155,9 @@ export const ElementCodeRes = z.object({
   css: z.string()
 })
 
+export const UpdateStatusElementBodySchema = z.object({
+  status: z.enum(ElementStatusValues),
+})
 
 export const UpdateElementBody = CreateElementBody
 export type UpdateElementBodyType = CreateElementBodyType
@@ -167,3 +176,4 @@ export type GetManageElementsQueryType = z.infer<typeof GetManageElementsQuerySc
 export type GetElementDetailResType = z.infer<typeof GetElementDetailResSchema>
 export type ElementCodeResType = z.TypeOf<typeof ElementCodeRes>
 export type ElementListResType = z.TypeOf<typeof ElementListRes>
+export type UpdateStatusElementBodyType = z.infer<typeof UpdateStatusElementBodySchema>

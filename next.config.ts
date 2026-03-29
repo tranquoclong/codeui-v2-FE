@@ -35,6 +35,18 @@ const nextConfig: NextConfig = {
         pathname: '/**'
       },
       {
+        hostname: 'imagedelivery.net',
+        pathname: '/**'
+      },
+      {
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**'
+      },
+      {
+        hostname: 'uiverse.io',
+        pathname: '/**'
+      },
+      {
         hostname: 'codeui-v2-be.onrender.com',
         pathname: '/**'
       },

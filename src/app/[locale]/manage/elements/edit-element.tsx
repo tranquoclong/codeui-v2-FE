@@ -3,13 +3,22 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useEffect, useState } from 'react'
-import { useGetManageElementQuery, useUpdateManageElementMutation } from '@/queries/useElement'
+import { useGetManageElementQuery, useUpdateStatusElementMutation } from '@/queries/useElement'
 import EditorElement from '../../(public)/create/editor'
 import { toast } from '@/components/ui/use-toast'
 import revalidateApiRequest from '@/apiRequests/revalidate'
+import { GetManageElementsQueryType } from '@/schemaValidations/element.schema'
 
-export default function EditElement({ id, setId }: { id: number; setId: (value: number) => void }) {
-  const updateManageElementMutation = useUpdateManageElementMutation()
+export default function EditElement({
+  id,
+  setId,
+  paramss
+}: {
+  id: number
+  setId: (value: number) => void
+  paramss: GetManageElementsQueryType
+}) {
+  const updateManageElementMutation = useUpdateStatusElementMutation(paramss)
   const elementQuery = useGetManageElementQuery({ id, enabled: Boolean(id) })
   const element = elementQuery.data?.payload
   const [theme, setTheme] = useState<'DARK' | 'LIGHT'>('DARK')
@@ -30,9 +39,6 @@ export default function EditElement({ id, setId }: { id: number; setId: (value: 
     try {
       let body = {
         id,
-        title: element?.title || '',
-        description: element?.description || '',
-        categories: [1],
         status: status
       }
       await updateManageElementMutation.mutateAsync(body)

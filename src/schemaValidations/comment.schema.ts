@@ -6,7 +6,7 @@ export const CommentSchema = z.object({
     content: z.string(),
     votes: z.number().int(),
     userId: z.number().int(),
-    elementId: z.number().int(),
+    elementId: z.coerce.number().int().positive(),
     replyCommentId: z.number().nullable(),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),

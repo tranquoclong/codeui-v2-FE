@@ -1,5 +1,11 @@
 import elementApiRequest from '@/apiRequests/element'
-import { GetElementsQueryType, GetManageElementsQueryType, UpdateElementBodyType, UpdateManageElementBodyType } from '@/schemaValidations/element.schema'
+import {
+  GetElementsQueryType,
+  GetManageElementsQueryType,
+  UpdateElementBodyType,
+  UpdateManageElementBodyType,
+  UpdateStatusElementBodyType
+} from '@/schemaValidations/element.schema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query-keys'
 // import { GetElementsQueryParamsType } from '@/schemaValidations/order.schema'
@@ -17,23 +23,6 @@ export const useManageElementListQuery = (queryParams: GetManageElementsQueryTyp
     queryKey: queryKeys.elements.listManage(queryParams)
   })
 }
-
-// export const useElementsInfiniteQuery = (params: GetElementsQueryParamsType) => {
-//   return useInfiniteQuery({
-//     queryKey: ['elements', params],
-//     queryFn: ({ pageParam = 1 }) =>
-//       elementApiRequest.getElementList({
-//         ...params,
-//         page: pageParam,
-//         limit: 12
-//       }),
-
-//     getNextPageParam: (lastPage) => lastPage.payload.nextPage ?? undefined,
-
-//     initialPageParam: 1,
-//     staleTime: 1000 * 60 * 5
-//   })
-// }
 
 export const useGetElementQuery = ({ id, enabled }: { id: number; enabled: boolean }) => {
   return useQuery({
@@ -97,6 +86,22 @@ export const useUpdateManageElementMutation = () => {
       queryClient.setQueryData(queryKeys.elements.detailManage(variables.id), data)
       queryClient.invalidateQueries({
         queryKey: queryKeys.elements.allManage,
+        exact: true
+      })
+    }
+  })
+}
+
+export const useUpdateStatusElementMutation = (queryParams: GetManageElementsQueryType) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, ...body }: UpdateStatusElementBodyType & { id: number }) =>
+      elementApiRequest.updateStatus(id, body),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(queryKeys.elements.detailManage(variables.id), data)
+      queryClient.invalidateQueries({
+      queryKey: queryKeys.elements.listManage(queryParams),
         exact: true
       })
     }

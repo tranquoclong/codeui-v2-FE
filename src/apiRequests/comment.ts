@@ -11,7 +11,7 @@ const commentApiRequest = {
             skipEmptyString: true,
         })
         return http.get<GetCommentsType>(`${prefix}/elements/${elementId}?${query}`, {
-            next: { tags: ['comments'] }
+            next: { tags: ['listcomments'] }
         })
     },
     listById: (commentId: number, pagination: PaginationQueryType) => {
@@ -20,7 +20,7 @@ const commentApiRequest = {
             skipEmptyString: true,
         })
         return http.get<GetCommentsType>(`${prefix}/${commentId}?${query}`, {
-            next: { tags: ['comments'] }
+            next: { tags: ['replies'] }
         })
     },
     create: (body: CreateCommentBodyType) => http.post<CreateCommentResType>(`${prefix}`, body),

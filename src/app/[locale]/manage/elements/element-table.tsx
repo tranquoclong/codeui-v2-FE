@@ -55,8 +55,7 @@ import { DataTableBulkActions } from './data-table-bulk-actions'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { ElementListResType, ElementResType } from '@/schemaValidations/element.schema'
 import { Badge } from '@/components/ui/badge'
-import { endOfDay, format, startOfDay, subDays, startOfMonth } from 'date-fns'
-
+import { usePathname, useRouter } from '@/i18n/routing'
 type ElementItem = ElementListResType['data'][0]
 
 const ElementTableContext = createContext<{
@@ -116,12 +115,12 @@ export const columns: ColumnDef<ElementResType>[] = [
     header: 'Title',
     cell: ({ row }) => <div className='capitalize'>{row.getValue('title')}</div>
   },
-  // {
-  //   id: 'brandName',
-  //   header: 'Type',
-  //   accessorFn: (row) => row.brand?.name,
-  //   cell: ({ getValue }) => <div className='capitalize'>{getValue<string>()}</div>
-  // },
+  {
+    id: 'brand',
+    header: 'Type',
+    accessorFn: (row) => row.brand?.name,
+    cell: ({ getValue }) => <div className='capitalize'>{getValue<string>()}</div>
+  },
   {
     accessorKey: 'theme',
     header: 'Theme',
@@ -295,35 +294,38 @@ function AlertDialogDeleteElement({
     </AlertDialog>
   )
 }
-
+const brand = [
+  { id: undefined, href: '/elements' },
+  { id: 1, href: '/buttons' },
+  { id: 2, href: '/switches' },
+  { id: 3, href: '/checkboxes' },
+  { id: 4, href: '/cards' },
+  { id: 5, href: '/loaders' },
+  { id: 6, href: '/inputs' },
+  { id: 7, href: '/forms' },
+  { id: 8, href: '/patterns' },
+  { id: 9, href: '/radio-buttons' },
+  { id: 10, href: '/tooltips' }
+]
 const PAGE_SIZE = 10
-
-const initFromDate = startOfDay(new Date())
-const initToDate = endOfDay(new Date())
-type DatePreset = 'today' | '7d' | '30d' | 'month' | null
-
 export default function ElementTable() {
+  const router = useRouter()
   const searchParams = useSearchParams()
-  // const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1
-  // const page = searchParam.get('page') || '1'
-  // const limit = searchParam.get('limit') || '30'
-  // const orderBy = searchParam.get('orderBy') || 'randomized'
-  // const theme = searchParam.get('theme') || 'all'
-  // const t = searchParam.get('t') || 'all'
-  // const paramss = useMemo(() => ({ page, limit, orderBy, theme, t }), [page, limit, orderBy, theme, t])
-  // const params = Object.fromEntries(searchParam.entries())
+  const pathname = usePathname()
   const page = Number(searchParams.get('page') || 1)
-  const limit = Number(searchParams.get('limit') || 12)
+  const limit = Number(searchParams.get('limit') || 100)
   const pageIndex = Number(page) - 1
   const sortBy = (searchParams.get('sortBy') as 'randomized' | 'favorites' | 'recent') || 'randomized'
-  
+  const brandMap = Object.fromEntries(brand.map((item) => [item.href, item.id]))
+  const brandIds = brandMap[pathname]
   const orderBy = (searchParams.get('orderBy') as 'asc' | 'desc') || 'desc'
-  
   const theme = ['DARK', 'LIGHT'].includes(searchParams.get('theme') || '')
     ? (searchParams.get('theme') as 'DARK' | 'LIGHT')
     : undefined
-  const tParam = searchParams.get('t')
-  const t = tParam === 'true' ? true : tParam === 'false' ? false : undefined
+          const status = ['APPROVED', 'REVIEW', 'REJECTED', 'DRAFT'].includes(searchParams.get('status') || '')
+            ? (searchParams.get('status') as 'APPROVED' | 'REVIEW' | 'REJECTED' | 'DRAFT')
+            : undefined
+  const t = searchParams.get('t') || undefined
     const paramss = useMemo(
       () => ({
         page,
@@ -331,9 +333,11 @@ export default function ElementTable() {
         sortBy,
         orderBy,
         theme,
-        t
+        t,
+        brandIds: brandIds ? [brandIds] : undefined,
+        status
       }),
-      [page, limit, sortBy, orderBy, theme, t]
+      [page, limit, sortBy, orderBy, theme, t, brandIds, status]
     )
   const [elementIdEdit, setElementIdEdit] = useState<number>(0)
   const [elementDelete, setElementDelete] = useState<ElementItem | null>(null)
@@ -347,35 +351,20 @@ export default function ElementTable() {
     pageIndex,
     pageSize: PAGE_SIZE 
   })
-  const [fromDate, setFromDate] = useState(initFromDate)
-  const [toDate, setToDate] = useState(initToDate)
-  const [activePreset, setActivePreset] = useState<DatePreset>(null)
-
-  const handlePreset = (preset: DatePreset) => {
-    const now = new Date()
-    const end = endOfDay(now)
-    let start: Date
-    switch (preset) {
-      case 'today':
-        start = startOfDay(now)
-        break
-      case '7d':
-        start = startOfDay(subDays(now, 7))
-        break
-      case '30d':
-        start = startOfDay(subDays(now, 30))
-        break
-      case 'month':
-        start = startOfMonth(now)
-        break
-      default:
-        return
+  const updateQueryParams = (updates: Record<string, string | null | undefined>, options?: { resetPage?: boolean }) => {
+    const params = new URLSearchParams(searchParams.toString())
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === '' || value === 'ALL') {
+        params.delete(key)
+      } else {
+        params.set(key, value)
+      }
+    })
+    if (options?.resetPage) {
+      params.set('page', '1')
     }
-    setFromDate(start)
-    setToDate(end)
-    setActivePreset(preset)
+    router.replace(`${pathname}?${params.toString()}`)
   }
-
   const table = useReactTable({
     data,
     columns,
@@ -415,10 +404,7 @@ export default function ElementTable() {
       }}
     >
       <div className={cn('max-sm:has-[div[role="toolbar"]]:mb-16', 'flex flex-1 flex-col gap-4')}>
-        <EditElement
-          id={elementIdEdit}
-          setId={setElementIdEdit}
-        />
+        <EditElement id={elementIdEdit} setId={setElementIdEdit} paramss={paramss} />
         <AlertDialogDeleteElement elementDelete={elementDelete} setElementDelete={setElementDelete} />
         <DataTableToolbar
           table={table}
@@ -426,65 +412,33 @@ export default function ElementTable() {
           searchKey='title'
           filters={[
             {
+              columnId: 'brand',
+              title: 'Type',
+              options: [
+                { label: 'buttons', value: 'button' },
+                { label: 'switches', value: 'switch' },
+                { label: 'checkboxes', value: 'checkbox' },
+                { label: 'cards', value: 'card' },
+                { label: 'loaders', value: 'loader' },
+                { label: 'inputs', value: 'input' },
+                { label: 'forms', value: 'form' },
+                { label: 'patterns', value: 'pattern' },
+                { label: 'radio-buttons', value: 'radio-button' },
+                { label: 'tooltips', value: 'tooltip' }
+              ]
+            },
+            {
               columnId: 'status',
               title: 'Status',
               options: [
-                { label: 'APPROVED', value: 'APPROVED' },
-                { label: 'REVIEW', value: 'REVIEW' },
-                { label: 'REJECTED', value: 'REJECTED' },
-                { label: 'DRAFT', value: 'DRAFT' }
+                { label: 'Approved', value: 'APPROVED' },
+                { label: 'Review', value: 'REVIEW' },
+                { label: 'Rejected', value: 'REJECTED' },
+                { label: 'Draft', value: 'DRAFT' }
               ]
             }
-            // {
-            //   columnId: 'tech',
-            //   title: 'Tech',
-            //   options: tech.map((tech) => ({ ...tech }))
-            // }
           ]}
         />
-        <div className='flex gap-2'>
-          <div className='flex flex-wrap gap-2'>
-            <Button variant={activePreset === 'today' ? 'default' : 'outline'} onClick={() => handlePreset('today')}>
-              Hôm nay
-            </Button>
-            <Button variant={activePreset === '7d' ? 'default' : 'outline'} onClick={() => handlePreset('7d')}>
-              7 ngày
-            </Button>
-            <Button variant={activePreset === '30d' ? 'default' : 'outline'} onClick={() => handlePreset('30d')}>
-              30 ngày
-            </Button>
-            <Button variant={activePreset === 'month' ? 'default' : 'outline'} onClick={() => handlePreset('month')}>
-              Tháng này
-            </Button>
-          </div>
-          <div className='flex gap-2 mb-4'>
-            <div className='flex items-center'>
-              <span className='mr-2'>Từ</span>
-              <Input
-                type='datetime-local'
-                placeholder='Từ ngày'
-                className='text-sm'
-                value={format(fromDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')}
-                onChange={(event) => {
-                  setFromDate(new Date(event.target.value))
-                  setActivePreset(null)
-                }}
-              />
-            </div>
-            <div className='flex items-center'>
-              <span className='mr-2'>Đến</span>
-              <Input
-                type='datetime-local'
-                placeholder='Đến ngày'
-                value={format(toDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')}
-                onChange={(event) => {
-                  setToDate(new Date(event.target.value))
-                  setActivePreset(null)
-                }}
-              />
-            </div>
-          </div>
-        </div>
         <div className='overflow-hidden rounded-md border'>
           <Table>
             <TableHeader>
@@ -521,7 +475,7 @@ export default function ElementTable() {
         </div>
         <DataTablePagination table={table} className='mt-auto' />
         <DataTableBulkActions table={table} />
-        <div className='flex items-center justify-end space-x-2 py-4'>
+        {/* <div className='flex items-center justify-end space-x-2 py-4'>
           <div className='text-xs text-muted-foreground py-4 flex-1 '>
             Hiển thị <strong>{table.getPaginationRowModel().rows.length}</strong> trong <strong>{data.length}</strong>{' '}
             kết quả
@@ -533,7 +487,7 @@ export default function ElementTable() {
               pathname='/manage/elements'
             />
           </div>
-        </div>
+        </div> */}
       </div>
     </ElementTableContext.Provider>
   )

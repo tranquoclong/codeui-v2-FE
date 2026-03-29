@@ -23,26 +23,26 @@ const menuItems: {
     title: 'products',
     href: '/products'
   },
-  {
-    title: 'menu',
-    href: '/guest/menu',
-    role: [Role.Guest]
-  },
-  {
-    title: 'orders',
-    href: '/guest/orders',
-    role: [Role.Guest]
-  },
+  // {
+  //   title: 'menu',
+  //   href: '/guest/menu',
+  //   role: [Role.Guest]
+  // },
+  // {
+  //   title: 'orders',
+  //   href: '/guest/orders',
+  //   role: [Role.Guest]
+  // },
   // {
   //   title: 'login',
   //   href: '/login',
   //   hideWhenLogin: true
   // },
-  {
-    title: 'manage',
-    href: '/manage/dashboard',
-    role: [Role.Admin, Role.Moderator]
-  }
+  // {
+  //   title: 'manage',
+  //   href: '/manage/dashboard',
+  //   role: [Role.Admin, Role.Moderator]
+  // }
 ]
 export default function NavItems({ className }: { className?: string }) {
   const t = useTranslations('NavItem')

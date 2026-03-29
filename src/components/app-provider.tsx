@@ -46,7 +46,6 @@ export const useAppStore = create<AppStoreType>((set) => ({
   setRole: (role?: RoleType | undefined) => {
     set({ role, isAuth: Boolean(role) })
     if (!role) {
-      console.log('role', role)
       removeTokensFromLocalStorage()
     }
   },
