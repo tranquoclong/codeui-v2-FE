@@ -15,7 +15,7 @@ import { useAccountMe } from '@/queries/useAccount'
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout()
-  const { data } = useAccountMe()
+  const { data } = useAccountMe(true)
   const account = data?.payload
   return (
     <Sidebar collapsible={collapsible} variant={variant}>

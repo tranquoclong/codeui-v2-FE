@@ -17,7 +17,7 @@ import { Link } from '@/i18n/routing'
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState()
-  const accountMe = useAccountMe()
+  const accountMe = useAccountMe(true)
   const account = accountMe.data?.payload
 
   return (

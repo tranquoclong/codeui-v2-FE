@@ -27,7 +27,6 @@ export default function Oauth() {
   const searchParams = useSearchParams()
   const accessToken = searchParams.get('accessToken')
   const refreshToken = searchParams.get('refreshToken')
-  const message = searchParams.get('message')
   useEffect(() => {
     if (accessToken && refreshToken) {
       if (count.current === 0) {
@@ -36,7 +35,7 @@ export default function Oauth() {
           .then(() => {
             setRole(roleName)
             // setSocket(generateSocketInstance(accessToken))
-            router.push('/manage/dashboard')
+            router.push('/')
           })
           .catch((e) => {
             toast({
@@ -49,7 +48,7 @@ export default function Oauth() {
       if (count.current === 0) {
         setTimeout(() => {
           toast({
-            description: message || 'Có lỗi xảy ra'
+            description: 'Có lỗi xảy ra'
           })
         })
         count.current++
@@ -61,7 +60,6 @@ export default function Oauth() {
     setRole,
     router,
     setSocket,
-    message,
     mutateAsync
   ])
   return null

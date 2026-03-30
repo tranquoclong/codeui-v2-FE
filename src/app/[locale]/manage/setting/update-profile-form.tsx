@@ -21,7 +21,7 @@ import { handleErrorApi } from '@/lib/utils'
 export default function UpdateProfileForm() {
   const [file, setFile] = useState<File | null>(null)
   const avatarInputRef = useRef<HTMLInputElement>(null)
-  const { data, refetch } = useAccountMe()
+  const { data, refetch } = useAccountMe(true)
   const updateMeMutation = useUpdateMeMutation()
   const uploadMediaMutation = useUploadMediaMutation()
   const form = useForm<UpdateMeBodyType>({

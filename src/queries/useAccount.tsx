@@ -6,10 +6,11 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query-keys'
 
-export const useAccountMe = () => {
+export const useAccountMe = (enabled: boolean) => {
   return useQuery({
     queryKey: queryKeys.accountMe.all,
-    queryFn: accountApiRequest.me
+    queryFn: accountApiRequest.me,
+    enabled
   })
 }
 

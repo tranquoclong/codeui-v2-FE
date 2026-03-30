@@ -1,42 +1,153 @@
 'use client'
 
-import { Link } from '@/i18n/routing'
+import { Link, useRouter } from '@/i18n/routing'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { format } from 'date-fns'
-import { useState, FormEvent, Fragment } from 'react'
-
+import { useState, FormEvent } from 'react'
+import useDialogState from '@/hooks/use-dialog-state'
 import { useCommentListQuery, useAddCommentMutation, useDeleteCommentMutation } from '@/queries/useComment'
-
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useAccountMe } from '@/queries/useAccount'
 import Reply from './reply'
 import { CreateCommentBodyType } from '@/schemaValidations/comment.schema'
+import { handleErrorApi } from '@/lib/utils'
+import { useAppStore } from '@/components/app-provider'
 
 interface Props {
   elementId: number
 }
 
-export default function Comment({ elementId }: Props) {
-  const accountMe = useAccountMe()
-  const account = accountMe.data?.payload
+function CommentCard({ elementId, comment, account, isAuth }: { elementId: number; comment: any; account: any; isAuth: boolean }) {
+  const [open, setOpen] = useDialogState()
+  const [activeReplyId, setActiveReplyId] = useState<number | null>(null)
 
-const limit = 2
-const commentsQuery = useCommentListQuery(elementId, limit)
-
-const allComments = commentsQuery.data?.pages.flatMap((page) => page.payload.data) ?? []
-
-const hasMore = commentsQuery.hasNextPage
-  const addCommentMutation = useAddCommentMutation({ page:1, limit })
   const deleteCommentMutation = useDeleteCommentMutation()
 
-  // const commentList = commentsQuery.data?.payload?.data ?? []
-  // const hasMore = page < (commentsQuery.data?.payload?.totalPages || 1)
+  const handleDelete = async (commentId: number) => {
+    if (deleteCommentMutation.isPending) return
+    try {
+      await deleteCommentMutation.mutateAsync(commentId)
+    } catch (error: any) {
+      handleErrorApi({
+        error
+      })
+    }
+  }
+  return (
+    <>
+      <div
+        className='flex relative gap-4 lg:gap-6 bg-neutral-800 py-4 px-4 lg:px-6 rounded-xl overflow-hidden '
+        style={{ wordBreak: 'break-word' }}
+      >
+        <div>
+          <div className='flex mb-3 items-center'>
+            <Link href={`/profile/${comment.user.id}`}>
+              <span className='relative flex shrink-0 overflow-hidden rounded bg-black w-[50px] h-[50px] lg:w-[40px] lg:h-[40px] mr-3'>
+                <Avatar className='aspect-square h-full w-full m-0'>
+                  <AvatarImage src={comment?.user.avatar ?? undefined} alt={comment?.user.name} />
+                  <AvatarFallback>{comment?.user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                </Avatar>
+              </span>
+            </Link>
+            <div className='flex flex-col items-start'>
+              <div className='font-bold text-gray-200 text-base leading-2 flex items-center gap-4'>
+                <Link href={`/profile/${comment.user.id}`} className='block'>
+                  {comment.user.name}
+                </Link>
+              </div>
+            </div>
+            <div className='flex items-center gap-3 ml-3'>
+              <span className=' text-gray-400 block text-sm'>
+                {format(new Date(comment.createdAt), 'MMM dd, yyyy')}
+              </span>
+            </div>
+          </div>
+          <p className='text-gray-200 text-base block'> {comment.content} </p>
+          {account?.id === comment.user.id && (
+            <div className='lg:absolute top-3 right-4 mt-6 lg:mt-0 font-semibold flex items-center gap-2 -ml-2 lg:ml-0'>
+              {isAuth && (
+                <button
+                  onClick={() => setOpen(true)}
+                  className='flex items-center gap-2 text-gray-400 font-sans cursor-pointer bg-transparent hover:bg-neutral-700 px-2 py-2 rounded border-none'
+                >
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 24 24'
+                    className='w-4 h-4'
+                    fill='none'
+                    stroke='currentColor'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                  >
+                    <path d='m16 7-1.106-2.211a3.236 3.236 0 0 0-5.788 0L8 7M4 7h16M6 7h12v8c0 1.864 0 2.796-.305 3.53a4 4 0 0 1-2.164 2.165C14.796 21 13.864 21 12 21s-2.796 0-3.53-.305a4 4 0 0 1-2.166-2.164C6 17.796 6 16.864 6 15V7Z' />
+                  </svg>
+                  Delete
+                </button>
+              )}
+
+              <button
+                onClick={() => setActiveReplyId(comment.id)}
+                className='flex items-center gap-2 text-gray-400 font-sans cursor-pointer bg-transparent hover:bg-neutral-700 px-2 py-2 rounded border-none '
+              >
+                <svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' className='w-4 h-4'>
+                  <path
+                    d='M8.03089 4C6.57669 5.05865 5.2706 6.29537 4.14485 7.67887C4.04828 7.79755 4 7.94044 4 8.08333M8.03089 12.1667C6.57669 11.108 5.2706 9.8713 4.14485 8.4878C4.04828 8.36912 4 8.22623 4 8.08333M4 8.08333H14.963C17.7448 8.08333 20 10.3033 20 13.0417C20 15.7801 17.7448 18 14.963 18H12'
+                    stroke='currentColor'
+                    strokeWidth={2}
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                  />
+                </svg>
+                Reply
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+      <Reply
+        commentId={comment.id}
+        accountId={account?.id}
+        elementId={elementId}
+        showReplyForm={activeReplyId === comment.id}
+        setShowReplyForm={() => setActiveReplyId(null)}
+      />
+      <ConfirmDialog
+        open={!!open}
+        onOpenChange={setOpen}
+        title='Delete comment'
+        desc={`Are you sure you want to delete this comment? ${comment.content}`}
+        confirmText='Delete'
+        destructive
+        handleConfirm={() => handleDelete(comment.id)}
+        className='sm:max-w-sm'
+      />
+    </>
+  )
+}
+
+export default function Comment({ elementId }: Props) {
+  const isAuth = useAppStore((state) => state.isAuth)
+  const accountMe = useAccountMe(isAuth)
+  const account = accountMe.data?.payload
+  const router = useRouter()
+  
+  const limit = 2
+  const commentsQuery = useCommentListQuery(elementId, limit)
+
+  const allComments = commentsQuery.data?.pages.flatMap((page) => page.payload.data) ?? []
+
+  const hasMore = commentsQuery.hasNextPage
+  const addCommentMutation = useAddCommentMutation({ page: 1, limit })
 
   const [commentContent, setCommentContent] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showReplyForm, setShowReplyForm] = useState(false)
-  const [activeReplyId, setActiveReplyId] = useState<number | null>(null)
   const handleSubmitComment = async (e: FormEvent) => {
     e.preventDefault()
+    if(!isAuth){
+      router.push('/login')
+      return
+    }
     if (!commentContent.trim() || !account || isSubmitting) return
 
     setIsSubmitting(true)
@@ -58,20 +169,11 @@ const hasMore = commentsQuery.hasNextPage
     }
   }
 
-  const handleDelete = async (commentId: number) => {
-    if (!confirm('Bạn có chắc muốn xóa bình luận này?')) return
-    try {
-      await deleteCommentMutation.mutateAsync(commentId)
-    } catch (error) {
-      console.error('Failed to delete:', error)
+  const loadMoreComments = () => {
+    if (hasMore && !commentsQuery.isFetchingNextPage) {
+      commentsQuery.fetchNextPage()
     }
   }
-
-const loadMoreComments = () => {
-  if (hasMore && !commentsQuery.isFetchingNextPage) {
-    commentsQuery.fetchNextPage()
-  }
-}
 
   return (
     <div className='flex gap-10 flex-col'>
@@ -116,85 +218,8 @@ const loadMoreComments = () => {
           </div>
           <div className='grid grid-cols-1 gap-3'>
             {allComments.map((comment) => (
-              <Fragment key={comment.id}>
-                <div
-                  className='flex relative gap-4 lg:gap-6 bg-neutral-800 py-4 px-4 lg:px-6 rounded-xl overflow-hidden '
-                  style={{ wordBreak: 'break-word' }}
-                >
-                  <div>
-                    <div className='flex mb-3 items-center'>
-                      <Link href={`/profile/${comment.user.id}`}>
-                        <span className='relative flex shrink-0 overflow-hidden rounded bg-black w-[50px] h-[50px] lg:w-[40px] lg:h-[40px] mr-3'>
-                          <Avatar className='aspect-square h-full w-full m-0'>
-                            <AvatarImage src={comment?.user.avatar ?? undefined} alt={comment?.user.name} />
-                            <AvatarFallback>{comment?.user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                        </span>
-                      </Link>
-                      <div className='flex flex-col items-start'>
-                        <div className='font-bold text-gray-200 text-base leading-2 flex items-center gap-4'>
-                          <Link href={`/profile/${comment.user.id}`} className='block'>
-                            {comment.user.name}
-                          </Link>
-                        </div>
-                      </div>
-                      <div className='flex items-center gap-3 ml-3'>
-                        <span className=' text-gray-400 block text-sm'>
-                          {format(new Date(comment.createdAt), 'MMM dd, yyyy')}
-                        </span>
-                      </div>
-                    </div>
-                    <p className='text-gray-200 text-base block'> {comment.content} </p>
-                    {account?.id === comment.user.id && (
-                      <div className='lg:absolute top-3 right-4 mt-6 lg:mt-0 font-semibold flex items-center gap-2 -ml-2 lg:ml-0'>
-                        <button
-                          onClick={() => handleDelete(comment.id)}
-                          className='flex items-center gap-2 text-gray-400 font-sans cursor-pointer bg-transparent hover:bg-neutral-700 px-2 py-2 rounded border-none'
-                        >
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            viewBox='0 0 24 24'
-                            className='w-4 h-4'
-                            fill='none'
-                            stroke='currentColor'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            strokeWidth={2}
-                          >
-                            <path d='m16 7-1.106-2.211a3.236 3.236 0 0 0-5.788 0L8 7M4 7h16M6 7h12v8c0 1.864 0 2.796-.305 3.53a4 4 0 0 1-2.164 2.165C14.796 21 13.864 21 12 21s-2.796 0-3.53-.305a4 4 0 0 1-2.166-2.164C6 17.796 6 16.864 6 15V7Z' />
-                          </svg>
-                          Delete
-                        </button>
-
-                        <button
-                          onClick={() => setActiveReplyId(comment.id)}
-                          className='flex items-center gap-2 text-gray-400 font-sans cursor-pointer bg-transparent hover:bg-neutral-700 px-2 py-2 rounded border-none '
-                        >
-                          <svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' className='w-4 h-4'>
-                            <path
-                              d='M8.03089 4C6.57669 5.05865 5.2706 6.29537 4.14485 7.67887C4.04828 7.79755 4 7.94044 4 8.08333M8.03089 12.1667C6.57669 11.108 5.2706 9.8713 4.14485 8.4878C4.04828 8.36912 4 8.22623 4 8.08333M4 8.08333H14.963C17.7448 8.08333 20 10.3033 20 13.0417C20 15.7801 17.7448 18 14.963 18H12'
-                              stroke='currentColor'
-                              strokeWidth={2}
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                            />
-                          </svg>
-                          Reply
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <Reply
-                  commentId={comment.id}
-                  accountId={account?.id}
-                  elementId={elementId}
-                  showReplyForm={activeReplyId === comment.id}
-                  setShowReplyForm={() => setActiveReplyId(null)}
-                />
-              </Fragment>
+              <CommentCard key={comment.id} elementId={elementId} comment={comment} account={account} isAuth={isAuth} />
             ))}
-
             {hasMore && (
               <button
                 onClick={loadMoreComments}

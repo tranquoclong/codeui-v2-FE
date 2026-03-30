@@ -2,8 +2,8 @@
 
 import { useMemo, useState, useCallback } from 'react'
 import Element from '@/components/element'
-import { Link, usePathname, useRouter } from '@/i18n/routing'
-import { useSearchParams, useParams } from 'next/navigation'
+import { usePathname, useRouter } from '@/i18n/routing'
+import { useSearchParams } from 'next/navigation'
 import { useElementListQuery } from '@/queries/useElement'
 import ElementFilter from './element-filter'
 import ElementNav from './element-nav'

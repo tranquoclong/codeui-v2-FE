@@ -208,8 +208,8 @@ export default async function Home(props: { params: Promise<{ locale: string }> 
           </div>
         </div>
         <section className='relative z-10 flex flex-col gap-4 px-4 mx-auto sm:container sm:px-0'>
-          <div className='mx-5 overflow-hidden border-2 bg-dark-800 rounded-3xl border-dark-600/80'>
-            <div className='p-5 pb-0 relative'>
+          <div className='mx-3 overflow-hidden border-2 bg-dark-800 rounded-3xl border-dark-600/80'>
+            <div className='p-3 pb-0 relative'>
               <div
                 className='absolute left-1/2 top-[80%] z-0 -translate-x-1/2 w-[100%] h-full bg-gradient-to-br from-gray-500 to-gray-700 rounded-full opacity-20 blur-3xl '
                 aria-hidden='true'

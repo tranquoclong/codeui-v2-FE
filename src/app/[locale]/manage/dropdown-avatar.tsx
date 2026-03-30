@@ -18,7 +18,7 @@ import { useAppStore } from '@/components/app-provider'
 export default function DropdownAvatar() {
   const logoutMutation = useLogoutMutation()
   const router = useRouter()
-  const { data } = useAccountMe()
+  const { data } = useAccountMe(true)
   const setRole = useAppStore((state) => state.setRole)
   const disconnectSocket = useAppStore((state) => state.disconnectSocket)
   const account = data?.payload

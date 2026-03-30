@@ -6,6 +6,7 @@ import { useRouter, usePathname } from '@/i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { RainbowButton } from '@/components/magicui/rainbow-button'
+import { useAppStore } from '@/components/app-provider'
 
 interface Props {
   sortBy: string
@@ -18,6 +19,7 @@ export default function ElementFilter({ sortBy, theme, t, search, setSearch }: P
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
+  const isAuth = useAppStore((state) => state.isAuth)
   const updateQueryParams = (updates: Record<string, string | null | undefined>, options?: { resetPage?: boolean }) => {
     const params = new URLSearchParams(searchParams.toString())
     Object.entries(updates).forEach(([key, value]) => {
@@ -37,7 +39,7 @@ export default function ElementFilter({ sortBy, theme, t, search, setSearch }: P
       <div className='w-full'>
         <div className='items-center justify-between hidden gap-2 filters max-lg:items-end lg:flex'>
           {/* <div className='text-gray-400 page text-sm whitespace-nowrap'>First page</div> */}
-          <RainbowButton onClick={() => router.push('/create')}>
+          <RainbowButton onClick={() => router.push(isAuth ? '/create' : '/login')}>
             Create
             <svg
               xmlns='http://www.w3.org/2000/svg'

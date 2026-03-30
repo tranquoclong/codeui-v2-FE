@@ -68,7 +68,13 @@
 .CollapsibleContent[data-state='closed'] {
   animation: slideUp 300ms ease-out;
 }
-
+.image-container:before {
+    top: 0;
+    left: 0;
+    position: absolute;
+    content: "";
+    box-shadow: 60px 60px 100px 30px #b900ed, 140px 170px 100px 30px #43f7f9;
+}
 
 @media (prefers-reduced-motion: reduce) {
   html {
