@@ -1,6 +1,8 @@
 import OauthForm from '@/app/[locale]/(public)/(auth)/oauth/oauth-form'
 import envConfig, { Locale } from '@/config'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata(props: {
   params: Promise<{ locale: Locale }>
 }) {
