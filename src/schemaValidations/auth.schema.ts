@@ -1,5 +1,6 @@
 import { Role } from '@/constants/type'
 import z from 'zod'
+import { UserSchema } from './user.schema'
 
 export const LoginBody = z
   .object({
@@ -10,21 +11,56 @@ export const LoginBody = z
   })
   .strict()
 
-export type LoginBodyType = z.TypeOf<typeof LoginBody>
+export const RegisterBodySchema = z
+  .object({
+    name: z.string().min(1, { message: 'required' }),
 
+    email: z
+      .string()
+      .min(1, { message: 'required' })
+      .email({ message: 'invalidEmail' }),
+
+    phoneNumber: z
+      .string()
+      .min(1, { message: 'required' })
+      .regex(/^(0|\+84)[0-9]{9}$/, {
+        message: 'invalidPhoneNumber'
+      }),
+
+    password: z
+      .string()
+      .min(6, 'minmaxPassword')
+      .max(100, 'minmaxPassword'),
+
+    confirmPassword: z
+      .string()
+      .min(1, { message: 'required' }),
+
+    code: z
+      .string()
+      .min(1, { message: 'required' })
+      .length(6, { message: 'invalidOtp' })
+  })
+  .strict()
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'mismatchPassword',
+    path: ['confirmPassword']
+  })
+  
 export const LoginRes = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),
   account: z.object({
     name: z.string(),
     email: z.string(),
-    roleName: z.enum([Role.Admin, Role.Moderator]),
+    roleName: z.enum([Role.Admin, Role.Moderator, Role.Client]),
     avatar: z.string().nullable()
   })
 })
 
-export type LoginResType = z.TypeOf<typeof LoginRes>
-
+export type GoogleLoginResType = {
+  url: string
+}
 export const RefreshTokenBody = z
   .object({
     refreshToken: z.string()
@@ -53,3 +89,6 @@ export const LoginGoogleQuery = z.object({
 })
 
 export type LoginGoogleQueryType = z.TypeOf<typeof LoginGoogleQuery>
+export type LoginBodyType = z.TypeOf<typeof LoginBody>
+export type RegisterBodyType = z.TypeOf<typeof RegisterBodySchema>
+export type LoginResType = z.TypeOf<typeof LoginRes>

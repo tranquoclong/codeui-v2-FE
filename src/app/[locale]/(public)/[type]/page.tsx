@@ -60,7 +60,9 @@ export default function Page() {
     },
     [searchParams, pathname, search]
   )
-  const elementListQuery = useElementListQuery(paramss)
+  const elementListQuery = useElementListQuery(paramss, {
+    enabled: true
+  })
   const refetchElementList = elementListQuery.refetch
   const isFetching = elementListQuery.isFetching
   const elementList = elementListQuery.data?.payload?.data ?? []

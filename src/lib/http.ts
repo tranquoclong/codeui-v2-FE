@@ -145,7 +145,6 @@ const request = async <Response>(
     }
   }
   // Đảm bảo logic dưới đây chỉ chạy ở phía client (browser), Do cái http này chạy ở cả cient-com và server-com luôn
-  console.log('isClient1', isClient)
   if (isClient) {
     const normalizeUrl = normalizePath(url)
     if (AUTH_API_PATHS.LOGIN.includes(normalizeUrl)) {

@@ -22,7 +22,7 @@ export function ProfileDropdown() {
 
   return (
     <>
-      {accountMe.isLoading ? (
+      {false ? (
         <>
           <div className='flex flex-row gap-2'>
             <div className='animate-pulse bg-neutral-700 w-36 h-10 rounded-lg'></div>
@@ -64,9 +64,8 @@ export function ProfileDropdown() {
                   <Link href='#'>Billing</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href='#'>Settings</Link>
+                  <Link href='/settings/profile'>Settings</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>New Team</DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant='destructive' onClick={() => setOpen(true)}>

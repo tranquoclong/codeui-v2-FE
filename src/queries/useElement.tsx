@@ -10,17 +10,19 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query-keys'
 // import { GetElementsQueryParamsType } from '@/schemaValidations/order.schema'
 
-export const useElementListQuery = (queryParams: GetElementsQueryType) => {
+export const useElementListQuery = (queryParams: GetElementsQueryType, options?: { enabled?: boolean }) => {
   return useQuery({
     queryFn: () => elementApiRequest.list(queryParams),
-    queryKey: queryKeys.elements.list(queryParams)
+    queryKey: queryKeys.elements.list(queryParams),
+    enabled: options?.enabled
   })
 }
 
-export const useManageElementListQuery = (queryParams: GetManageElementsQueryType) => {
+export const useManageElementListQuery = (queryParams: GetManageElementsQueryType, options?: { enabled?: boolean }) => {
   return useQuery({
     queryFn: () => elementApiRequest.listManage(queryParams),
-    queryKey: queryKeys.elements.listManage(queryParams)
+    queryKey: queryKeys.elements.listManage(queryParams),
+    enabled: options?.enabled
   })
 }
 

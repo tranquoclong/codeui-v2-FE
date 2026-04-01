@@ -2,7 +2,10 @@
   "ErrorMessage": {
     "invalidEmail": "Invalid email",
     "required": "This field is required",
-    "minmaxPassword": "Password must be between 6 and 100 characters"
+    "invalidPhoneNumber": "Invalid phone number",
+    "minmaxPassword": "Password must be between 6 and 100 characters",
+    "mismatchPassword": "Passwords do not match",
+    "invalidOtp": "Invalid OTP"
   },
   "Brand": {
     "title": "codeui",
@@ -23,13 +26,21 @@
     "description": "Manager login area",
     "cardDescription": "Enter your email and password to log in to the system",
     "buttonLogin": "Login",
-    "loginWithGoogle": "Login with Google"
+    "loginWithGoogle": "Continue with Google"
+  },
+  "Register": {
+    "title": "Register",
+    "description": "Manager registration area",
+    "cardDescription": "Enter your email and password to create an account",
+    "buttonRegister": "Register",
+    "registerWithGoogle": "Register with Google"
   },
   "DishDetail": {
     "notFound": "Dish not found"
   },
   "Profile": {
-    "notFound": "Profile not found"
+    "notFound": "Profile not found",
+    "buttonUpdate": "Save changes"
   },
   "LoginGuest": {
     "title": "Login to order",

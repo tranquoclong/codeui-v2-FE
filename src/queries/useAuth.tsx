@@ -7,6 +7,24 @@ export const useLoginMutation = () => {
   })
 }
 
+export const useRegisterMutation = () => {
+  return useMutation({
+    mutationFn: authApiRequest.register
+  })
+}
+
+export const useOtpMutation = () => {
+  return useMutation({
+    mutationFn: authApiRequest.verifyOtp
+  })
+}
+
+export const useLoginWithGoogleMutation = () => {
+  return useMutation({
+    mutationFn: authApiRequest.loginWithGoogle
+  })
+}
+
 export const useLogoutMutation = () => {
   return useMutation({
     mutationFn: authApiRequest.logout

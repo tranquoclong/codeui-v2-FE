@@ -1,18 +1,19 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link, useRouter, usePathname } from '@/i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { useGetProfile } from '@/queries/useAccount'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useAccountMe, useGetProfile } from '@/queries/useAccount'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { RainbowButton } from '@/components/magicui/rainbow-button'
 import Image from 'next/image'
-import { useManageElementListQuery } from '@/queries/useElement'
+import { useElementListQuery, useManageElementListQuery } from '@/queries/useElement'
 import { SkeletonElement } from '@/components/ui/skeletonElement'
 import Element from '@/components/element'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useAppStore } from '@/components/app-provider'
 
 interface Props {
   id: number
@@ -21,6 +22,10 @@ export default function Profile({ id }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
+  const isAuth = useAppStore((state) => state.isAuth)
+  const accountMe = useAccountMe(isAuth)
+  const account = accountMe.data?.payload
+
   const profileQuery = useGetProfile({ id, enabled: Boolean(id) })
   const profile = profileQuery.data?.payload
   const page = Number(searchParams.get('page') || 1)
@@ -65,11 +70,20 @@ export default function Profile({ id }: Props) {
       }
       router.replace(`${pathname}?${params.toString()}`)
     }
-  const elementListQuery = useManageElementListQuery(paramss)
-  const elementList = elementListQuery.data?.payload?.data ?? []
+  const isOwner = !!account?.id && !!profile?.id && account.id === profile.id
+  const elementListQuery = useElementListQuery(paramss, {
+    enabled: !isOwner
+  })
+
+  const manageElementListQuery = useManageElementListQuery(paramss, {
+    enabled: isOwner
+  })
+
+  const query = isOwner ? manageElementListQuery : elementListQuery
+  const elementList = query.data?.payload?.data ?? []
   const currentPage = Number(page) || 1
-  const totalPages = elementListQuery.data?.payload?.totalPages || 1
-  const totalItems = elementListQuery.data?.payload?.totalItems || 0
+  const totalPages = query.data?.payload?.totalPages || 1
+  const totalItems = query.data?.payload?.totalItems || 0
   
   return (
     <div className='w-full min-w-0 z-10'>
@@ -190,10 +204,14 @@ export default function Profile({ id }: Props) {
             >
               <TabsList>
                 <TabsTrigger value='APPROVED'>Elements</TabsTrigger>
-                {/* <TabsTrigger value='variations'>Variations</TabsTrigger> */}
-                <TabsTrigger value='REVIEW'>Review</TabsTrigger>
-                <TabsTrigger value='REJECTED'>Rejected</TabsTrigger>
-                <TabsTrigger value='DRAFT'>Drafts</TabsTrigger>
+                {account?.id === profile?.id && (
+                  <>
+                    {/* <TabsTrigger value='variations'>Variations</TabsTrigger> */}
+                    <TabsTrigger value='REVIEW'>Review</TabsTrigger>
+                    <TabsTrigger value='REJECTED'>Rejected</TabsTrigger>
+                    <TabsTrigger value='DRAFT'>Drafts</TabsTrigger>
+                  </>
+                )}
               </TabsList>
             </Tabs>
             <div className='flex flex-wrap items-center gap-1 gap-y-2 '>

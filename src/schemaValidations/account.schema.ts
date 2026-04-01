@@ -84,8 +84,20 @@ export type UpdateEmployeeAccountBodyType = z.TypeOf<typeof UpdateEmployeeAccoun
 
 export const UpdateMeBody = z
   .object({
-    name: z.string().trim().min(2).max(256),
-    avatar: z.string().url().optional()
+    name: z.string().min(1, { message: 'required' }),
+
+    phoneNumber: z
+      .string()
+      .min(1, { message: 'required' })
+      .regex(/^(0|\+84)[0-9]{9}$/, {
+        message: 'invalidPhoneNumber'
+      }),
+
+    avatar: z
+      .string()
+      .url('invalidUrl')
+      .optional()
+      .or(z.literal(''))
   })
   .strict()
 
@@ -93,19 +105,22 @@ export type UpdateMeBodyType = z.TypeOf<typeof UpdateMeBody>
 
 export const ChangePasswordBody = z
   .object({
-    oldPassword: z.string().min(6).max(100),
-    password: z.string().min(6).max(100),
-    confirmPassword: z.string().min(6).max(100)
+    password: z
+      .string()
+      .min(6, 'minmaxPassword')
+      .max(100, 'minmaxPassword'),
+    newPassword: z
+      .string()
+      .min(6, 'minmaxPassword')
+      .max(100, 'minmaxPassword'),
+    confirmNewPassword: z
+      .string()
+      .min(1, { message: 'required' }),
   })
   .strict()
-  .superRefine(({ confirmPassword, password }, ctx) => {
-    if (confirmPassword !== password) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Mật khẩu mới không khớp',
-        path: ['confirmPassword']
-      })
-    }
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: 'mismatchPassword',
+    path: ['confirmNewPassword']
   })
 
 export type ChangePasswordBodyType = z.TypeOf<typeof ChangePasswordBody>

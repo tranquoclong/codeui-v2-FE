@@ -341,7 +341,9 @@ export default function ElementTable() {
     )
   const [elementIdEdit, setElementIdEdit] = useState<number>(0)
   const [elementDelete, setElementDelete] = useState<ElementItem | null>(null)
-  const elementListQuery = useManageElementListQuery(paramss)
+  const elementListQuery = useManageElementListQuery(paramss, {
+    enabled: true
+  })
   const data = elementListQuery.data?.payload.data ?? []
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])

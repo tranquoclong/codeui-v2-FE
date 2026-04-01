@@ -2,7 +2,10 @@
   "ErrorMessage": {
     "invalidEmail": "Email không hợp lệ",
     "required": "Trường này không được để trống",
-    "minmaxPassword": "Mật khẩu phải từ 6 đến 100 ký tự"
+    "invalidPhoneNumber": "Số điện thoại không hợp lệ",
+    "minmaxPassword": "Mật khẩu phải từ 6 đến 100 ký tự",
+    "mismatchPassword": "Mật khẩu không trùng khớp",
+    "invalidOtp": "Mã OTP không hợp lệ"
   },
   "Brand": {
     "title": "codeui",
@@ -22,7 +25,8 @@
     "notFound": "Món ăn không tồn tại"
   },
   "Profile": {
-    "notFound": "hồ sơ không tồn tại"
+    "notFound": "hồ sơ không tồn tại",
+    "buttonUpdate": "Lưu thay đổi"
   },
   "LoginGuest": {
     "title": "Đăng nhập để gọi món",
@@ -33,7 +37,14 @@
     "description": "Khu vực đăng nhập quản lý",
     "cardDescription": "Nhập email và mật khẩu của bạn để đăng nhập vào hệ thống",
     "buttonLogin": "Đăng nhập",
-    "loginWithGoogle": "Đăng nhập với Google"
+    "loginWithGoogle": "Tiếp tục với Google"
+  },
+  "Register": {
+    "title": "Đăng ký",
+    "description": "Khu vực đăng ký quản lý",
+    "cardDescription": "Nhập email và mật khẩu của bạn để tạo tài khoản",
+    "buttonRegister": "Đăng ký",
+    "registerWithGoogle": "Đăng ký với Google"
   },
   "GuestMenu": {
     "title": "Thực đơn",

@@ -2,9 +2,11 @@ import http from '@/lib/http'
 import {
   LoginBodyType,
   LoginResType,
+  GoogleLoginResType,
   LogoutBodyType,
   RefreshTokenBodyType,
-  RefreshTokenResType
+  RefreshTokenResType,
+  RegisterBodyType
 } from '@/schemaValidations/auth.schema'
 
 const authApiRequest = {
@@ -12,11 +14,18 @@ const authApiRequest = {
     status: number
     payload: RefreshTokenResType
   }> | null,
-  sLogin: (body: LoginBodyType) => http.post<LoginResType>('/auth/login', body),
+  sLogin: (body: LoginBodyType) => http.post<LoginResType>('/auth/login', body), 
   login: (body: LoginBodyType) =>
     http.post<LoginResType>('/api/auth/login', body, {
       baseUrl: ''
     }),
+  sRegister: (body: RegisterBodyType) => http.post<LoginResType>('/auth/register', body),
+  register: (body: RegisterBodyType) =>
+    http.post<LoginResType>('/api/auth/register', body, {
+      baseUrl: ''
+    }),
+  verifyOtp: (body: { email: string; type: string }) => http.post('/auth/otp', body),
+  loginWithGoogle: () => http.get<GoogleLoginResType>('/auth/google-link'),
   sLogout: (
     body: LogoutBodyType & {
       accessToken: string
@@ -51,8 +60,10 @@ const authApiRequest = {
     this.refreshTokenRequest = null
     return result
   },
+  sSetTokenToCookie: (body: { accessToken: string; refreshToken: string }) =>
+    http.post('/auth/token', body),
   setTokenToCookie: (body: { accessToken: string; refreshToken: string }) =>
-    http.post('/auth/token', body, { baseUrl: '' })
+    http.post('/api/auth/token', body, { baseUrl: '' })
 }
 
 export default authApiRequest

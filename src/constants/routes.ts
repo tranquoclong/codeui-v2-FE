@@ -11,7 +11,7 @@ export const UNAUTHENTICATED_PATHS = ['/login', '/logout', '/refresh-token']
 
 // API path patterns used in HTTP client interceptor
 export const AUTH_API_PATHS = {
-  LOGIN: ['api/auth/login', 'api/guest/auth/login'] as string[],
+  LOGIN: ['api/auth/login', 'api/guest/auth/login', 'api/auth/register'] as string[],
   LOGOUT: ['api/auth/logout', 'api/guest/auth/logout'] as string[],
   TOKEN: 'api/auth/token'
 } as const
