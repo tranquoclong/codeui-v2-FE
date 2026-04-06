@@ -12,6 +12,7 @@ import { CreateElementBodyType } from '@/schemaValidations/element.schema'
 import { ElementStatus, ThemeElement } from '@/constants/type'
 import { LoaderCircle } from 'lucide-react'
 import { defaultCodes } from './data/data'
+import AddElement from './AddElement'
 
 export default function Create() {
   const router = useRouter()
@@ -135,7 +136,8 @@ export default function Create() {
                           Change type
                         </button>
                       </div>
-                      <div className='flex items-stretch gap-2'>
+                      <AddElement brandId={type.id} html={htmlText} css={cssText} />
+                      {/* <div className='flex items-stretch gap-2'>
                         <button
                           type='button'
                           className='inline-flex items-center gap-2 justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 disabled:pointer-events-none disabled:opacity-50 hover:bg-neutral-700 h-10 px-4 py-2 whitespace-nowrap'
@@ -177,7 +179,7 @@ export default function Create() {
                             Submit for review
                           </RainbowButton>
                         </span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

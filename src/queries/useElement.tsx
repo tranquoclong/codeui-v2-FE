@@ -56,7 +56,7 @@ export const useAddElementMutation = () => {
     mutationFn: elementApiRequest.add,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.elements.all
+        queryKey: queryKeys.elements.allManage
       })
     }
   })

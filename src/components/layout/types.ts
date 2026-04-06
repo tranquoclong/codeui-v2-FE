@@ -15,7 +15,7 @@ type BaseNavItem = {
   title: string
   badge?: string
   icon?: React.ElementType
-  roles: ['ADMIN', 'MODERATOR']
+  roles: ['ADMIN', 'MODERATOR'] | ['ADMIN']
 }
 
 type NavLink = BaseNavItem & {

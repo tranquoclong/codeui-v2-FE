@@ -60,9 +60,9 @@ export function ProfileDropdown() {
                 <DropdownMenuItem asChild>
                   <Link href={`/profile/${account?.id}`}>Profile</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
+                {/* <DropdownMenuItem asChild>
                   <Link href='#'>Billing</Link>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem asChild>
                   <Link href='/settings/profile'>Settings</Link>
                 </DropdownMenuItem>

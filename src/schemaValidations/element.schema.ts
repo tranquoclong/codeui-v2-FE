@@ -85,6 +85,11 @@ export const CreateElementBody = z.object({
   status: z.enum([ElementStatus.DRAFT, ElementStatus.REVIEW]),
 })
 
+export const CreateElementHeadBody = z.object({
+  title: z.string().trim().max(100),
+  description: z.string().trim().max(500),
+})
+
 
 export const UpdateManageElementBody = CreateElementBody.omit({
   brandId: true,
@@ -97,6 +102,7 @@ export const UpdateManageElementBody = CreateElementBody.omit({
 })
 
 export type CreateElementBodyType = z.TypeOf<typeof CreateElementBody>
+export type CreateElementHeadBodyType = z.TypeOf<typeof CreateElementHeadBody>
 
 // export const ElementSchema = z.object({
 //   id: z.number(),

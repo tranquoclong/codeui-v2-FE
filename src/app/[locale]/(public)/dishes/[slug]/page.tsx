@@ -7,6 +7,7 @@ import { baseOpenGraph } from '@/shared-metadata'
 import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { cache } from 'react'
+
 const getDetail = cache((id: number) =>
   wrapServerApi(() => dishApiRequest.getDish(id))
 )

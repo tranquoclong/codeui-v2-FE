@@ -60,10 +60,10 @@ export const sidebarData: SidebarData = {
           roles: [Role.Admin, Role.Moderator]
         },
         {
-          title: 'Tasks',
-          url: '/manage/tasks',
+          title: 'Brands',
+          url: '/manage/brands',
           icon: ListTodo,
-          roles: [Role.Admin, Role.Moderator]
+          roles: [Role.Admin]
         },
         {
           title: 'Products',

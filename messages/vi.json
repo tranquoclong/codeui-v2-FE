@@ -9,7 +9,8 @@
   },
   "Brand": {
     "title": "codeui",
-    "defaultTitle": "codeui"
+    "defaultTitle": "codeui",
+    "description": "Manage brands"
   },
   "HomePage": {
     "title": "Trang chủ",

@@ -21,6 +21,10 @@ export const queryKeys = {
     all: ['dishes'] as const,
     detail: (id: number) => ['dishes', id] as const
   },
+  brands: {
+    all: ['brands'] as const,
+    detail: (id: number) => ['brands', id] as const
+  },
   comments: {
     all: ['comments'] as const,
     lists: (elementId: number, { limit }: { limit: number }) => ['comments', 'lists', elementId, { limit }] as const,
